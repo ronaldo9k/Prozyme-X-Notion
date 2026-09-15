@@ -13,7 +13,7 @@
   },
   {
     "src": "R9.png?v=1",
-    "sizes": "512x512",
+    "sizes": "any",
     "type": "image/png"
   }
 ]
