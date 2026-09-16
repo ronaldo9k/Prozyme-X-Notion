@@ -2064,6 +2064,23 @@
   background: #d1fae5;            /* 마우스 올리면 좀 더 진하게 */
 }
 
+
+    /* 🆕 거래처 검색 / 거래처 선택 버튼 폭 동일 (PC·태블릿) */
+.client-choice-row {
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+}
+
+/* 🆕 모바일(500px 이하)에서는 검색이 더 넓고, 선택은 좁게 유지 */
+@media (max-width: 500px) {
+  .client-choice-row {
+    grid-template-columns:
+      minmax(0, 1fr)
+      115px;
+  }
+}
+
     
     
   </style>
