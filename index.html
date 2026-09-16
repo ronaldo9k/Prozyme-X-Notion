@@ -2077,8 +2077,18 @@
   .client-choice-row {
     grid-template-columns:
       minmax(0, 1fr)
-      250px;
+      minmax(0, 1fr);
   }
+/* 2번 해결: 모바일에서 버튼 높이를 줄임 */
+  .client-choice-row button,
+  .client-choice-row input, 
+  .client-choice-row .transaction-mode-button { 
+    padding-top: 6px;    /* 위쪽 내부 여백 단축 */
+    padding-bottom: 6px; /* 아래쪽 내부 여백 단축 */
+    height: auto;        /* 고정 높이가 설정되어 있다면 해제하고 패딩으로 조절 */
+    font-size: 14px;     /* (선택) 모바일 화면에 맞춰 글자 크기도 살짝 줄임 */
+  }
+  
 }
 
     
