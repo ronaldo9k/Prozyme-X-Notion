@@ -1507,6 +1507,130 @@
 
 
     /* ========================================================================
+       ⭐ 거래처 전체 선택 화면 / 주소 / 가격 요약
+       ======================================================================== */
+
+    .client-select-hidden {
+      display: none !important;
+    }
+
+    .client-picker-button {
+      width: 100% !important;
+      margin-top: 0 !important;
+      text-align: left;
+      background: #fff;
+      color: #111827;
+      text-shadow: none;
+      box-shadow: none;
+      border: 1px solid #d7dce2;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .client-address-summary {
+      margin-top: 9px;
+      padding: 11px 12px;
+      border-radius: 11px;
+      background: #f8fafc;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.55;
+    }
+
+    .client-address-line {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .tmap-button {
+      flex: 0 0 auto;
+      width: auto !important;
+      min-width: 62px !important;
+      margin: 0 !important;
+      padding: 5px 9px !important;
+      border-radius: 9px !important;
+      font-size: 12px !important;
+      background: #111827 !important;
+      color: #fff !important;
+      text-shadow: none !important;
+      box-shadow: none !important;
+    }
+
+    .transaction-summary {
+      margin-top: 11px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      background: #111827;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1.6;
+    }
+
+    .client-picker-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #fff;
+      overflow-y: auto;
+    }
+
+    .client-picker-header {
+      position: sticky;
+      top: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: #111827;
+      color: #fff;
+      box-shadow: 0 3px 12px rgba(0,0,0,.18);
+    }
+
+    .client-picker-back {
+      width: 42px !important;
+      min-width: 42px !important;
+      max-width: 42px !important;
+      margin: 0 !important;
+      padding: 8px !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      background: transparent !important;
+      font-size: 28px !important;
+      color: #fff !important;
+      text-shadow: none !important;
+    }
+
+    .client-picker-title {
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .client-picker-list {
+      padding: 10px 12px 30px;
+    }
+
+    .client-picker-item {
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 15px 13px !important;
+      border: 0 !important;
+      border-bottom: 1px solid #e5e7eb !important;
+      border-radius: 0 !important;
+      background: #fff !important;
+      color: #111827 !important;
+      text-align: left !important;
+      text-shadow: none !important;
+      box-shadow: none !important;
+      font-size: 16px !important;
+      font-weight: 800 !important;
+    }
+
+
+    /* ========================================================================
        ⭐ 기타
        ======================================================================== */
 
@@ -1912,6 +2036,31 @@
 
 
       <!-- ==================================================================
+           ⭐ 입출고 사전 선택
+           ================================================================== -->
+
+      <div class="transaction-mode-buttons">
+
+        <button
+          type="button"
+          id="inboundModeButton"
+          class="transaction-mode-button"
+        >
+          📥 입고
+        </button>
+
+        <button
+          type="button"
+          id="outboundModeButton"
+          class="transaction-mode-button selected"
+        >
+          📤 출고
+        </button>
+
+      </div>
+
+
+      <!-- ==================================================================
            ⭐ 최종 메인 버튼
            ================================================================== -->
 
@@ -2027,7 +2176,7 @@
 // ============================================================================
 
 const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbwAzVaYx0UJGE84-U4AffY01B8gxJQZpWtihyx2M8lW3eDr9dXy6IbFv7BwxLYlmO1h/exec";
+  "https://script.google.com/macros/s/AKfycbz0Hd6LK3063Ex1hzJMaqUop_ubWI9Gt8PpJqNEhN43sYY0054hbEf7-Y1BFIjrC3qT/exec";
 
 
 // ============================================================================
@@ -2110,6 +2259,9 @@ let secondDeliveryLocationList = [];
 
 let currentInputMode = "voice";
 
+// ⭐ 첫 화면에서 미리 선택한 입출고
+let selectedTransactionMode = "출고";
+
 /*
  * ⭐⭐⭐ 이번 문제 해결을 위한 최소 추가 변수
  *
@@ -2147,6 +2299,14 @@ const finishButton =
 
 const directButton =
   document.getElementById("directButton");
+
+
+const inboundModeButton =
+  document.getElementById("inboundModeButton");
+
+
+const outboundModeButton =
+  document.getElementById("outboundModeButton");
 
 
 const timer =
@@ -2777,6 +2937,52 @@ finishButton.addEventListener(
 
 
 // ============================================================================
+// 📦 10-0. 입출고 사전 선택
+// ============================================================================
+
+function setTransactionMode(mode) {
+
+  selectedTransactionMode =
+    mode === "입고" ? "입고" : "출고";
+
+  if (inboundModeButton) {
+    inboundModeButton.classList.toggle(
+      "selected",
+      selectedTransactionMode === "입고"
+    );
+  }
+
+  if (outboundModeButton) {
+    outboundModeButton.classList.toggle(
+      "selected",
+      selectedTransactionMode === "출고"
+    );
+  }
+
+}
+
+
+if (inboundModeButton) {
+  inboundModeButton.addEventListener(
+    "click",
+    function() {
+      setTransactionMode("입고");
+    }
+  );
+}
+
+
+if (outboundModeButton) {
+  outboundModeButton.addEventListener(
+    "click",
+    function() {
+      setTransactionMode("출고");
+    }
+  );
+}
+
+
+// ============================================================================
 // ✏️ 10-1. 직접 입력하기
 // ============================================================================
 
@@ -2872,7 +3078,7 @@ async function startDirectInput() {
       1,
 
     mode:
-      "출고",
+      selectedTransactionMode,
 
     deliveryDate:
       getTodayLocal(),
@@ -2943,7 +3149,9 @@ async function startDirectInput() {
     const data =
       await postToGAS({
         action:
-          "directPreview"
+          "directPreview",
+        mode:
+          selectedTransactionMode
       });
 
 
@@ -3356,7 +3564,8 @@ async function sendAnalyzeToGAS(text) {
     const data =
       await postToGAS({
         action: "analyze",
-        text: text
+        text: text,
+        mode: selectedTransactionMode
       });
 
 
@@ -4199,6 +4408,28 @@ function showPreview(data) {
   }
 
 
+  // ⭐ 입고를 미리 선택했고 음성에서 거래처를 따로 말하지 않은 경우
+  // 현대바이오랜드를 기본 거래처로 사용합니다. 사용자가 Step 2에서 변경할 수 있습니다.
+  if (
+    data.mode === "입고" &&
+    !data.clientPageId
+  ) {
+
+    const inboundDefaultClient =
+      clientList.find(
+        function(item) {
+          return String(item.name || "") === "현대바이오랜드";
+        }
+      );
+
+    if (inboundDefaultClient) {
+      data.clientPageId = inboundDefaultClient.id;
+      data.clientName = inboundDefaultClient.name;
+    }
+
+  }
+
+
   const client =
     clientList.find(
       function(item) {
@@ -4439,9 +4670,17 @@ function showPreview(data) {
 
         '</div>' +
 
+        '<button ' +
+          'type="button" ' +
+          'id="clientPickerButton" ' +
+          'class="client-picker-button"' +
+        '>' +
+          (client ? '🏢 ' + escapeHtml(client.name) : '거래처 선택 ▼') +
+        '</button>' +
+
         '<select ' +
           'id="clientSelect" ' +
-          'class="edit-select"' +
+          'class="edit-select client-select-hidden"' +
         '>' +
 
           '<option value="">' +
@@ -4517,11 +4756,10 @@ function showPreview(data) {
       '</div>' +
 
 
-      '<div class="help-text">' +
-        '검색어 일부만 입력하거나 오른쪽 ▼에서 직접 선택하세요.' +
-        '<br>' +
-        '예: "미노" → "미노유통"' +
-      '</div>' +
+      '<div ' +
+        'id="clientAddressSummary" ' +
+        'class="client-address-summary"' +
+      '></div>' +
 
     '</div>' +
 
@@ -4705,6 +4943,12 @@ function showPreview(data) {
     '</div>' +
 
 
+    '<div ' +
+      'id="transactionSummary" ' +
+      'class="transaction-summary"' +
+    '></div>' +
+
+
     '<div class="original-text">' +
 
       '<strong>🗣 입력 원문</strong>' +
@@ -4743,6 +4987,27 @@ function showPreview(data) {
 
   previewResult.innerHTML =
     html;
+
+
+  // ⭐ 거래처 전체 선택 화면
+  const clientPicker =
+    document.createElement("div");
+
+  clientPicker.id = "clientPickerScreen";
+  clientPicker.className = "client-picker-screen step-hidden";
+  clientPicker.innerHTML =
+    '<div class="client-picker-header">' +
+      '<button type="button" id="clientPickerBackButton" class="client-picker-back">←</button>' +
+      '<div class="client-picker-title">거래처 선택</div>' +
+    '</div>' +
+    '<div class="client-picker-list">' +
+      clientList.map(function(item) {
+        return '<button type="button" class="client-picker-item" data-client-id="' +
+          escapeAttribute(item.id) + '">🏢 ' + escapeHtml(item.name) + '</button>';
+      }).join("") +
+    '</div>';
+
+  previewResult.appendChild(clientPicker);
 
 
   showResultScreen();
@@ -4798,6 +5063,8 @@ function showPreview(data) {
 
         }
 
+        renderTransactionSummary();
+
       }
     );
 
@@ -4807,6 +5074,100 @@ function showPreview(data) {
   setupClientSearch(
     data.clientPageId || ""
   );
+
+  // ⭐ 거래처 전체 선택 화면 열기 / 뒤로가기
+  const clientPickerButton =
+    document.getElementById("clientPickerButton");
+
+  const clientPickerScreen =
+    document.getElementById("clientPickerScreen");
+
+  const clientPickerBackButton =
+    document.getElementById("clientPickerBackButton");
+
+  if (clientPickerButton && clientPickerScreen) {
+    clientPickerButton.addEventListener("click", function() {
+      clientPickerScreen.classList.remove("step-hidden");
+    });
+
+    clientPickerScreen
+      .querySelectorAll(".client-picker-item")
+      .forEach(function(button) {
+        button.addEventListener("click", function() {
+          const selectedId = button.getAttribute("data-client-id");
+          const selectedClient = clientList.find(function(item) {
+            return String(item.id) === String(selectedId);
+          });
+
+          if (!selectedClient) return;
+
+          const hiddenSelect = document.getElementById("clientSelect");
+          if (hiddenSelect) {
+            hiddenSelect.value = selectedClient.id;
+          }
+
+          const searchInput = document.getElementById("clientSearchInput");
+          if (searchInput) searchInput.value = selectedClient.name;
+
+          const selectedBox = document.getElementById("selectedClient");
+          if (selectedBox) {
+            selectedBox.style.display = "block";
+            selectedBox.innerHTML = "✅ 선택된 거래처: " + escapeHtml(selectedClient.name);
+          }
+
+          clientPickerButton.textContent = "🏢 " + selectedClient.name;
+          clientPickerScreen.classList.add("step-hidden");
+          renderTransactionSummary();
+        });
+      });
+  }
+
+  if (clientPickerBackButton && clientPickerScreen) {
+    clientPickerBackButton.addEventListener("click", function() {
+      clientPickerScreen.classList.add("step-hidden");
+    });
+  }
+
+  const liveUpdateIds = [
+    "productSelect",
+    "quantityInput",
+    "modeSelect",
+    "sizeInput"
+  ];
+
+  liveUpdateIds.forEach(function(id) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.addEventListener("change", renderTransactionSummary);
+      element.addEventListener("input", renderTransactionSummary);
+    }
+  });
+
+  const modeSelectForDefault = document.getElementById("modeSelect");
+  if (modeSelectForDefault) {
+    modeSelectForDefault.addEventListener("change", function() {
+      selectedTransactionMode = modeSelectForDefault.value;
+
+      // ⭐ 입고로 바꾸고 거래처가 비어 있으면 현대바이오랜드를 기본 선택
+      if (selectedTransactionMode === "입고") {
+        const currentClientSelect = document.getElementById("clientSelect");
+        if (currentClientSelect && !currentClientSelect.value) {
+          const defaultInboundClient = clientList.find(function(item) {
+            return String(item.name || "") === "현대바이오랜드";
+          });
+          if (defaultInboundClient) {
+            currentClientSelect.value = defaultInboundClient.id;
+            const pickerButton = document.getElementById("clientPickerButton");
+            if (pickerButton) pickerButton.textContent = "🏢 " + defaultInboundClient.name;
+          }
+        }
+      }
+
+      renderTransactionSummary();
+    });
+  }
+
+  renderTransactionSummary();
 
 
   document
@@ -4881,6 +5242,88 @@ function showPreview(data) {
 
       }
     );
+
+}
+
+
+// ============================================================================
+// 💰 16-0. 주소 / 단가 / 무게 표시
+// ============================================================================
+
+function renderTransactionSummary() {
+
+  const summary =
+    document.getElementById("transactionSummary");
+
+  const addressBox =
+    document.getElementById("clientAddressSummary");
+
+  const clientSelect =
+    document.getElementById("clientSelect");
+
+  const productSelect =
+    document.getElementById("productSelect");
+
+  const quantityInput =
+    document.getElementById("quantityInput");
+
+  const modeSelect =
+    document.getElementById("modeSelect");
+
+  const sizeInput =
+    document.getElementById("sizeInput");
+
+  if (!summary || !clientSelect || !productSelect || !quantityInput || !modeSelect || !sizeInput) {
+    return;
+  }
+
+  const mode = modeSelect.value || selectedTransactionMode || "출고";
+  const client = clientList.find(function(item) {
+    return String(item.id) === String(clientSelect.value || "");
+  });
+
+  const quantity = Number(quantityInput.value || 0);
+  const sizeMatch = String(sizeInput.value || "").match(/(12|15|20)\s*KG/i);
+  const kg = sizeMatch ? Number(sizeMatch[1]) : 0;
+  const totalWeight = kg * quantity;
+
+  if (mode === "입고") {
+    if (addressBox) addressBox.innerHTML = "";
+    summary.innerHTML =
+      '총 무게: ' + totalWeight.toLocaleString("ko-KR") + ' KG';
+    return;
+  }
+
+  if (addressBox) {
+    const address = client ? String(client.address || "").trim() : "";
+    if (address) {
+      addressBox.innerHTML =
+        '<div class="client-address-line">' +
+          '<span>주소: ' + escapeHtml(address) + '</span>' +
+          '<button type="button" class="tmap-button" id="tmapButton">TMAP</button>' +
+        '</div>';
+
+      const tmapButton = document.getElementById("tmapButton");
+      if (tmapButton) {
+        tmapButton.addEventListener("click", function() {
+          const url =
+            "tmap://search?name=" +
+            encodeURIComponent(address);
+          window.location.href = url;
+        });
+      }
+    } else {
+      addressBox.innerHTML = "";
+    }
+  }
+
+  const unitPrice = client ? Number(client.unitPrice || 0) : 0;
+  const salesAmount = unitPrice * quantity;
+
+  summary.innerHTML =
+    '단가: ' + unitPrice.toLocaleString("ko-KR") + '원' +
+    '　판매금: ' + salesAmount.toLocaleString("ko-KR") + '원' +
+    '　총 무게: ' + totalWeight.toLocaleString("ko-KR") + ' KG';
 
 }
 
@@ -4967,6 +5410,16 @@ function setupClientSearch(
       escapeHtml(
         client.name
       );
+
+    const pickerButton =
+      document.getElementById("clientPickerButton");
+
+    if (pickerButton) {
+      pickerButton.textContent =
+        "🏢 " + client.name;
+    }
+
+    renderTransactionSummary();
 
 
     candidates.innerHTML =
@@ -5862,6 +6315,11 @@ function resetForNewRecording() {
 
   currentInputMode =
     "voice";
+
+  selectedTransactionMode =
+    "출고";
+
+  setTransactionMode("출고");
 
   currentPreviewData =
     null;
