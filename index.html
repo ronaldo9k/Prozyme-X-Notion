@@ -219,9 +219,9 @@
 
     .step-dot {
 
-      width: 26px;
+      width: 13px;
 
-      height: 26px;
+      height: 13px;
 
       border-radius: 50%;
 
@@ -235,7 +235,7 @@
 
       color: #e5e7eb;
 
-      font-size: 12px;
+      font-size: 6px;
 
       font-weight: 900;
 
@@ -569,6 +569,51 @@
     }
 
 
+        /* ========================================================================
+       ⭐ 입고 / 출고 버튼 한 줄 배치
+       ======================================================================== */
+
+    .transaction-mode-buttons {
+
+      display: flex;
+
+      gap: 10px;
+
+      width: 100%;
+
+    }
+
+
+    .transaction-mode-buttons .transaction-mode-button {
+
+      flex: 1;
+
+    }
+
+
+    /* ========================================================================
+       ⭐ 첫 화면 3개 메인 버튼 영역
+       ======================================================================== */
+
+    #inputScreen > .card:first-of-type {
+
+      background: transparent;
+
+    .transaction-mode-buttons .transaction-mode-button {
+
+      width: auto !important;
+
+      min-width: 0 !important;
+
+      max-width: none !important;
+
+      flex: 1 1 0;
+
+    }
+
+
+      
+    
     /* ========================================================================
        ⭐ 첫 화면 3개 메인 버튼 영역
        ======================================================================== */
