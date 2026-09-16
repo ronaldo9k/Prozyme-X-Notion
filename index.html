@@ -1972,6 +1972,85 @@
     }
 
 
+    /* ========================================================================
+       🆕 요청 반영 추가 영역 (기존 기능은 그대로 유지)
+       ======================================================================== */
+
+    /* 1) 첫화면 입고/출고 버튼: 한 줄에 2개 배치 */
+    .transaction-mode-buttons {
+      display: flex;
+      gap: 9px;
+      margin-bottom: 4px;
+    }
+
+    #inputScreen > .card:first-of-type .transaction-mode-button {
+      flex: 1 1 0;
+      width: auto;
+      min-width: 0;
+      max-width: none;
+      margin: 0;
+    }
+
+    /* 2) STEP ①②③ 숫자를 확 줄이기 */
+    .step-dot {
+      width: 16px;
+      min-width: 16px;
+      height: 16px;
+      font-size: 9px;
+    }
+
+    /* 3) 거래처 검색 토글 버튼: 거래처 선택 버튼과 같은 스타일 */
+    .client-search-toggle {
+      width: 100% !important;
+      margin-top: 0 !important;
+      text-align: left;
+      background: #fff;
+      color: #111827;
+      text-shadow: none;
+      box-shadow: none;
+      border: 1px solid #d7dce2;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    /* 거래처 선택 버튼 글자도 같은 두께로 통일 */
+    .client-picker-button {
+      font-weight: 500;
+    }
+
+    /* 4) 거래처 검색 패널 (버튼 누르면 아래로 펼쳐짐) */
+    .client-search-panel {
+      margin-top: 9px;
+      padding: 12px;
+      border: 1px solid #e1e5ea;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .client-search-phrase {
+      font-size: 14px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .client-search-panel .client-search-input {
+      padding-left: 14px;
+      margin-bottom: 9px;
+    }
+
+    /* 5) 단가/판매금/총무게: 주소 글자 크기로 한 줄에 3개 */
+    .transaction-summary {
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
   </style>
 
 </head>
@@ -4622,11 +4701,7 @@ function showPreview(data) {
       '</div>' +
 
 
-      '<div class="preview-step">' +
-        'STEP 2 · 확인' +
       '</div>' +
-
-    '</div>' +
 
 
     '<div class="preview-title">' +
@@ -4634,9 +4709,11 @@ function showPreview(data) {
     '</div>' +
 
 
-    '<div class="preview-badge">' +
-      escapeHtml(inputLabel) +
-    '</div>' +
+    (currentInputMode === "direct"
+      ? ""
+      : '<div class="preview-badge">' +
+        escapeHtml(inputLabel) +
+      '</div>') +
 
 
     '<div class="edit-row">' +
@@ -4649,24 +4726,13 @@ function showPreview(data) {
 
         '<div class="client-search-wrap">' +
 
-          '<span class="search-icon">' +
-            '🔍' +
-          '</span>' +
-
-          '<input ' +
-            'id="clientSearchInput" ' +
-            'class="edit-input client-search-input" ' +
-            'type="search" ' +
-            'autocomplete="off" ' +
-            'placeholder="거래처 검색" ' +
-            'value="' +
-              escapeAttribute(
-                client
-                  ? client.name
-                  : ""
-              ) +
-            '"' +
+          '<button ' +
+            'type="button" ' +
+            'id="clientSearchToggleButton" ' +
+            'class="client-search-toggle"' +
           '>' +
+            '🔍 거래처 검색' +
+          '</button>' +
 
         '</div>' +
 
@@ -4727,9 +4793,28 @@ function showPreview(data) {
 
 
       '<div ' +
-        'id="clientCandidates" ' +
-        'class="client-candidates"' +
-      '></div>' +
+        'id="clientSearchPanel" ' +
+        'class="client-search-panel step-hidden"' +
+      '>' +
+
+        '<div class="client-search-phrase">' +
+          '🔎 거래처 이름을 검색하세요' +
+        '</div>' +
+
+        '<input ' +
+          'id="clientSearchInput" ' +
+          'class="edit-input client-search-input" ' +
+          'type="search" ' +
+          'autocomplete="off" ' +
+          'placeholder="거래처 이름을 적어보세요" ' +
+        '>' +
+
+        '<div ' +
+          'id="clientCandidates" ' +
+          'class="client-candidates"' +
+        '></div>' +
+
+      '</div>' +
 
 
       '<div ' +
@@ -4759,6 +4844,11 @@ function showPreview(data) {
       '<div ' +
         'id="clientAddressSummary" ' +
         'class="client-address-summary"' +
+      '></div>' +
+
+      '<div ' +
+        'id="transactionSummary" ' +
+        'class="transaction-summary"' +
       '></div>' +
 
     '</div>' +
@@ -4941,12 +5031,6 @@ function showPreview(data) {
       '</div>' +
 
     '</div>' +
-
-
-    '<div ' +
-      'id="transactionSummary" ' +
-      'class="transaction-summary"' +
-    '></div>' +
 
 
     '<div class="original-text">' +
@@ -5290,7 +5374,7 @@ function renderTransactionSummary() {
   if (mode === "입고") {
     if (addressBox) addressBox.innerHTML = "";
     summary.innerHTML =
-      '총 무게: ' + totalWeight.toLocaleString("ko-KR") + ' KG';
+      '<span>총 무게: ' + totalWeight.toLocaleString("ko-KR") + ' KG</span>';
     return;
   }
 
@@ -5321,9 +5405,9 @@ function renderTransactionSummary() {
   const salesAmount = unitPrice * quantity;
 
   summary.innerHTML =
-    '단가: ' + unitPrice.toLocaleString("ko-KR") + '원' +
-    '　판매금: ' + salesAmount.toLocaleString("ko-KR") + '원' +
-    '　총 무게: ' + totalWeight.toLocaleString("ko-KR") + ' KG';
+    '<span>단가: ' + unitPrice.toLocaleString("ko-KR") + '원</span>' +
+    '<span>판매금: ' + salesAmount.toLocaleString("ko-KR") + '원</span>' +
+    '<span>총 무게: ' + totalWeight.toLocaleString("ko-KR") + ' KG</span>';
 
 }
 
@@ -5368,6 +5452,43 @@ function setupClientSearch(
   ) {
 
     return;
+
+  }
+
+
+  // ⭐ 거래처 검색 버튼: 아래로 검색 패널 열기 / 닫기
+  const searchPanel =
+    document.getElementById(
+      "clientSearchPanel"
+    );
+
+  const searchToggleButton =
+    document.getElementById(
+      "clientSearchToggleButton"
+    );
+
+  if (searchToggleButton && searchPanel) {
+
+    searchToggleButton.addEventListener(
+      "click",
+      function() {
+
+        searchPanel.classList.toggle(
+          "step-hidden"
+        );
+
+        if (
+          !searchPanel.classList.contains(
+            "step-hidden"
+          )
+        ) {
+
+          renderCandidates();
+
+        }
+
+      }
+    );
 
   }
 
@@ -5425,6 +5546,62 @@ function setupClientSearch(
     candidates.innerHTML =
       "";
 
+
+    if (searchPanel) {
+
+      searchPanel.classList.add(
+        "step-hidden"
+      );
+
+    }
+
+  }
+
+
+  function bindCandidateButtons() {
+
+    candidates
+      .querySelectorAll(
+        ".candidate-item"
+      )
+      .forEach(
+        function(button) {
+
+          button.addEventListener(
+            "click",
+            function() {
+
+              const client =
+                clientList.find(
+                  function(item) {
+
+                    return String(
+                      item.id
+                    ) ===
+                    String(
+                      button.getAttribute(
+                        "data-client-id"
+                      )
+                    );
+
+                  }
+                );
+
+
+              if (client) {
+
+                selectClient(
+                  client
+                );
+
+              }
+
+            }
+          );
+
+        }
+      );
+
   }
 
 
@@ -5438,10 +5615,40 @@ function setupClientSearch(
 
     if (!keyword) {
 
+      const allListHtml =
+        clientList
+          .map(
+            function(client) {
+
+              return (
+
+                '<button ' +
+                'type="button" ' +
+                'class="candidate-item" ' +
+                'data-client-id="' +
+                escapeAttribute(
+                  client.id
+                ) +
+                '">' +
+
+                '🏢 ' +
+
+                escapeHtml(
+                  client.name
+                ) +
+
+                '</button>'
+
+              );
+
+            }
+          )
+          .join("");
+
       candidates.innerHTML =
-        '<div class="candidate-empty">' +
-        '🔍 거래처 이름 일부를 입력하면 후보가 나타납니다.' +
-        '</div>';
+        allListHtml;
+
+      bindCandidateButtons();
 
       return;
 
@@ -5507,47 +5714,7 @@ function setupClientSearch(
         .join("");
 
 
-    candidates
-      .querySelectorAll(
-        ".candidate-item"
-      )
-      .forEach(
-        function(button) {
-
-          button.addEventListener(
-            "click",
-            function() {
-
-              const client =
-                clientList.find(
-                  function(item) {
-
-                    return String(
-                      item.id
-                    ) ===
-                    String(
-                      button.getAttribute(
-                        "data-client-id"
-                      )
-                    );
-
-                  }
-                );
-
-
-              if (client) {
-
-                selectClient(
-                  client
-                );
-
-              }
-
-            }
-          );
-
-        }
-      );
+    bindCandidateButtons();
 
   }
 
@@ -6408,5 +6575,6 @@ loadInitialData();
 
 </script>
 
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
