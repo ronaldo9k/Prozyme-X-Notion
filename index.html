@@ -2179,6 +2179,35 @@ button:disabled {
     transform: rotate(360deg);
   }
 }   
+
+/* =========================================================
+   ⭐ 첫 화면 직접입력 + 새로고침 한 줄
+   ========================================================= */
+
+.direct-refresh-row {
+  display: flex;
+  gap: 9px;
+  width: 100%;
+  margin: 0;
+}
+
+/* 직접 입력 + 첫 화면 새로고침 */
+#inputScreen > .card:first-of-type .direct-refresh-row button {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+}
+
+/* 기존 첫 화면 버튼의 고정 170px 설정을
+   direct-refresh-row 안에서는 무시 */
+#inputScreen > .card:first-of-type .direct-refresh-row #directButton,
+#inputScreen > .card:first-of-type .direct-refresh-row #inputRefreshButton {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+}
     
   </style>
 
@@ -2301,6 +2330,7 @@ button:disabled {
 
       </button>
 
+      <div class="direct-refresh-row">
 
       <button id="directButton">
 
@@ -2314,6 +2344,14 @@ button:disabled {
 
       </button>
 
+       <button
+    id="inputRefreshButton"
+    type="button"
+  >
+    🔄 새로 고침
+  </button>
+
+</div>  
 
       <div
         id="timer"
@@ -4088,229 +4126,175 @@ async function loadInitialData() {
 
 async function refreshInitialDataForPreview() {
 
-  const refreshButton =
+  const button =
     document.getElementById(
       "previewRefreshButton"
     );
 
-
-  /*
-   * ⭐ 현재 STEP 2에 입력되어 있는 값을 먼저 보관합니다.
-   *
-   * 새로고침 과정에서 showPreview()가 다시 실행되더라도
-   * 사용자가 방금 수정한 값이 사라지지 않도록 합니다.
-   */
-
-  const currentValues = {
-
-    clientPageId:
-      document.getElementById(
-        "clientSelect"
-      )?.value || "",
-
-    productPageId:
-      document.getElementById(
-        "productSelect"
-      )?.value || "",
-
-    quantity:
-      document.getElementById(
-        "quantityInput"
-      )?.value || "1",
-
-    mode:
-      document.getElementById(
-        "modeSelect"
-      )?.value || "출고",
-
-    deliveryDate:
-      document.getElementById(
-        "deliveryDateInput"
-      )?.value ||
-      getTodayLocal(),
-
-    deliveryType:
-      document.getElementById(
-        "deliveryTypeSelect"
-      )?.value ||
-      "직송",
-
-    secondDeliveryLocation:
-      document.getElementById(
-        "secondDeliverySelect"
-      )?.value || ""
-
-  };
-
-
-  /*
-   * ⭐ 현재 등록 준비 상태도 기억합니다.
-   *
-   * 직접 입력을 누른 직후 아직 directPreview가 끝나지 않았다면
-   * pendingToken이 없을 수 있습니다.
-   *
-   * 이 상태를 새로고침 후에도 그대로 유지합니다.
-   */
-
-  const hadPendingToken =
-    !!pendingToken;
-
-
-  /*
-   * ⭐ 버튼을 잠시 비활성화하여
-   * 사용자가 여러 번 연속으로 누르는 것을 방지합니다.
-   */
-
-  if (refreshButton) {
-
-    refreshButton.disabled =
-      true;
-
-    refreshButton.textContent =
-      "⏳ 새로 고침 중...";
-
+  if (!button) {
+    return;
   }
 
 
   try {
 
-    /*
-     * ⭐ 기존에 정상적으로 사용 중인
-     * loadInitialData()를 그대로 재사용합니다.
-     *
-     * 별도의 GAS 함수나 별도의 데이터 구조를 만들지 않습니다.
-     */
+    button.disabled = true;
+
+    button.textContent =
+      "⏳ 새로 고침 중...";
+
+
+    // =====================================================
+    // ⭐ 기존처럼 Notion 최신 데이터는 다시 가져옵니다.
+    // =====================================================
 
     await loadInitialData();
 
 
-    /*
-     * ⭐ loadInitialData()가 끝나면
-     * 최신 거래처 / 제품 / Select 목록이 준비되어 있습니다.
-     *
-     * 그 최신 목록을 사용하면서
-     * 방금 전 STEP 2에서 사용자가 선택했던 값은 다시 적용합니다.
-     */
+    // =====================================================
+    // ⭐⭐⭐ 핵심
+    //
+    // 기존 사용자가 입력했던 값은 모두 초기화합니다.
+    //
+    // 기존 기본값은 그대로 사용합니다.
+    // =====================================================
 
-    if (
-      currentPreviewData
-    ) {
-
-      const restoredPreview = {
-
-        ...currentPreviewData,
-
-        clientPageId:
-          currentValues.clientPageId,
-
-        productPageId:
-          currentValues.productPageId,
-
-        quantity:
-          currentValues.quantity,
-
-        mode:
-          currentValues.mode,
-
-        deliveryDate:
-          currentValues.deliveryDate,
-
-        deliveryType:
-          currentValues.deliveryType,
-
-        secondDeliveryLocation:
-          currentValues.secondDeliveryLocation
-
-      };
+    const defaultProduct =
+      getDefault15Product();
 
 
-      /*
-       * ⭐ 최신 목록 + 기존 입력값을 합쳐서
-       * STEP 2를 다시 그립니다.
-       */
+    if (!defaultProduct) {
 
-      showPreview(
-        restoredPreview
+      throw new Error(
+        '기본 제품인 "푸로찜 15 KG"를 찾지 못했습니다.'
       );
 
-
-      /*
-       * ⭐ pendingToken이 아직 없었다면
-       * 확인 버튼도 다시 비활성화합니다.
-       *
-       * 반대로 pendingToken이 있었다면
-       * 정상적으로 등록 버튼을 사용할 수 있습니다.
-       */
-
-      if (!hadPendingToken) {
-
-        const confirmButton =
-          document.getElementById(
-            "confirmButton"
-          );
+    }
 
 
-        if (confirmButton) {
+    // =====================================================
+    // ⭐ 기존 기본값 그대로
+    // =====================================================
 
-          confirmButton.disabled =
-            true;
+    const resetPreview = {
 
-          confirmButton.textContent =
-            "⏳ 등록 준비 중...";
+      status:
+        "preview",
 
-        }
+      token:
+        pendingToken,
+
+      clientPageId:
+        "",
+
+      clientName:
+        "",
+
+      productPageId:
+        defaultProduct.id,
+
+      productName:
+        defaultProduct.name,
+
+      size:
+        "15 KG",
+
+      quantity:
+        1,
+
+      mode:
+        selectedTransactionMode,
+
+      deliveryDate:
+        getTodayLocal(),
+
+      deliveryType:
+        "직송",
+
+      secondDeliveryLocation:
+        "",
+
+      // ⭐ 새로 추가되는 비고도 초기화
+      remark:
+        "",
+
+      // 음성 원문/직접입력 표시 정보는 유지
+      text:
+        currentPreviewData &&
+        currentPreviewData.text
+          ? currentPreviewData.text
+          : "직접 입력"
+
+    };
+
+
+    currentPreviewData =
+      resetPreview;
+
+
+    // =====================================================
+    // ⭐ Step 2를 기본값으로 다시 그립니다.
+    // =====================================================
+
+    showPreview(
+      resetPreview
+    );
+
+
+    // =====================================================
+    // ⭐ 기존 pendingToken은 그대로 사용합니다.
+    //
+    // 새 Notion 페이지를 미리 만드는 것이 아니므로
+    // 토큰을 새로 만들 필요가 없습니다.
+    // =====================================================
+
+    if (!pendingToken) {
+
+      const confirmButton =
+        document.getElementById(
+          "confirmNotionButton"
+        );
+
+      if (confirmButton) {
+
+        confirmButton.disabled =
+          true;
+
+        confirmButton.textContent =
+          "⏳ 등록 준비 중...";
 
       }
 
     }
 
 
-    console.log(
-      "🔄 STEP 2 초기 데이터 새로 고침 완료"
-    );
-
-
   } catch (error) {
 
     console.error(
-      "STEP 2 초기 데이터 새로 고침 오류:",
+      "Step 2 새로 고침 오류:",
       error
     );
 
 
-    /*
-     * ⭐ 새로고침 실패해도
-     * 현재 화면과 기존 입력값은 최대한 그대로 유지합니다.
-     */
-
     alert(
-      "거래처 / 제품 목록 새로 고침에 실패했습니다.\n\n" +
+      "새로 고침 중 문제가 발생했습니다.\n\n" +
       (
         error.message ||
         String(error)
       )
     );
 
+
   } finally {
 
-    /*
-     * ⭐ 새로고침이 끝나면 버튼을 원래 상태로 복구합니다.
-     */
+    button.disabled = false;
 
-    if (refreshButton) {
-
-      refreshButton.disabled =
-        false;
-
-      refreshButton.textContent =
-        "🔄 새로 고침";
-
-    }
+    button.textContent =
+      "🔄 새로 고침";
 
   }
 
 }
-
 
 // ============================================================================
 // 📋 15-1. 제품 표시 순서
@@ -4615,6 +4599,16 @@ function showPreview(data) {
 
   currentPreviewData =
     data;
+
+  // ⭐ 비고 기본값
+if (
+  typeof currentPreviewData.remark === "undefined"
+) {
+
+  currentPreviewData.remark =
+    "";
+
+}
 
 
   const defaultProduct =
@@ -5183,6 +5177,24 @@ function showPreview(data) {
 
     '</div>' +
 
+    <!-- ⭐ 비고 -->
+<div class="edit-row">
+
+  <label class="edit-label">
+    📝 비고
+  </label>
+
+  <input
+    id="remarkInput"
+    class="edit-input"
+    type="text"
+    value="${escapeAttribute(
+      data.remark || ''
+    )}"
+    placeholder="비고를 입력하세요"
+  >
+
+</div>
 
     '<div class="original-text">' +
 
@@ -6119,6 +6131,16 @@ async function confirmNotionRegistration() {
       "secondDeliverySelect"
     );
 
+  const remarkInput =
+  document.getElementById(
+    "remarkInput"
+  );
+
+const remark =
+  remarkInput
+    ? remarkInput.value.trim()
+    : "";
+
 
   if (
     !clientSelect ||
@@ -6674,7 +6696,33 @@ function resetForNewRecording() {
 
 }
 
+// =========================================================
+// ⭐ 첫 화면 새로 고침
+//
+// 앱을 처음 열었을 때와 같은 입력 화면으로 돌아갑니다.
+// 단, 앱 시작 시 이미 받아온 Notion 데이터는 그대로 유지합니다.
+// =========================================================
 
+const inputRefreshButton =
+  document.getElementById(
+    "inputRefreshButton"
+  );
+
+if (inputRefreshButton) {
+
+  inputRefreshButton.addEventListener(
+    "click",
+    function() {
+
+      // 기존 전체 초기화 함수 사용
+      resetForNewRecording();
+
+    }
+  );
+
+}
+
+  
 // ============================================================================
 // 🛡️ 19. HTML 안전 처리
 // ============================================================================
