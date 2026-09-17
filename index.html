@@ -5176,24 +5176,24 @@ if (
 
     '</div>' +
 
-    <!-- ⭐ 비고 -->
-<div class="edit-row">
+    // ⭐ 비고
+    '<div class="edit-row">' +
 
-  <label class="edit-label">
-    📝 비고
-  </label>
+      '<label class="edit-label">' +
+        '📝 비고' +
+      '</label>' +
 
-  <input
-    id="remarkInput"
-    class="edit-input"
-    type="text"
-    value="${escapeAttribute(
-      data.remark || ''
-    )}"
-    placeholder="비고를 입력하세요"
-  >
+      '<input ' +
+        'id="remarkInput" ' +
+        'class="edit-input" ' +
+        'type="text" ' +
+        'value="' +
+          escapeAttribute(data.remark || '') +
+        '" ' +
+        'placeholder="비고를 입력하세요"' +
+      '>' +
 
-</div>
+    '</div>' +
 
     '<div class="original-text">' +
 
