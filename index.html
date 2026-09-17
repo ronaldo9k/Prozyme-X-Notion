@@ -3123,6 +3123,11 @@ directButton.addEventListener(
 
 
 async function startDirectInput() {
+  if (!initialDataReady) {
+  inputResult.innerHTML =
+    "📦 거래처와 상품정보를 아직 불러오는 중입니다.<br><br>잠시만 기다려주세요.";
+  return;
+}
 
   if (isSending)
     return;
