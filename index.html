@@ -890,36 +890,84 @@
     }
 
 
-    /* ========================================================================
-       ⭐ statusCard
-       ======================================================================== */
+/* ========================================================================
+   ⭐ statusCard
+   ⭐ 첫 화면 하단 상태 표시 영역
+   ======================================================================== */
 
-    #statusCard {
+#statusCard {
 
-      position: sticky;
+  position: sticky;
 
-      top: 8px;
+  top: 8px;
 
-      z-index: 100;
+  z-index: 100;
 
-      width: 100%;
+  width: 100%;
 
-      margin-top: 8px;
+  min-height: 120px;
 
-      background:
-        rgba(255,255,255,.97);
+  margin-top: 8px;
 
-      box-shadow:
-        0 10px 30px rgba(0,0,0,.38);
+  box-sizing: border-box;
 
-    }
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 24px 20px;
+
+  background:
+    rgba(5, 7, 11, 0.72);
+
+  border:
+    1px solid rgba(255, 215, 0, 0.20);
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.38),
+    inset 0 1px 0 rgba(255,255,255,.06);
+
+  backdrop-filter: blur(10px);
+
+  -webkit-backdrop-filter: blur(10px);
+
+  color: #ffffff;
+
+  text-align: center;
+
+  line-height: 1.6;
+
+}
 
 
-    button:disabled {
+/* ⭐ 상태 표시 안의 내용도 정확히 가운데 */
 
-      cursor: not-allowed;
+#statusCard #inputResult {
 
-    }
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+
+}
+
+
+/* ⭐ 버튼 비활성화 */
+
+button:disabled {
+
+  cursor: not-allowed;
+
+}
 
 
     /* ========================================================================
@@ -2100,7 +2148,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
+  text-align: center;
 }
 
 .loading-spinner {
@@ -2113,8 +2162,12 @@
 }
 
 .loading-text {
+  width: 100%;
+
   font-size: 15px;
   line-height: 1.5;
+
+  text-align: center;
 }
 
 @keyframes notionLoadingSpin {
@@ -6708,6 +6761,9 @@ inputResult.innerHTML =
       );
 
     }
+    // ⭐ 노션 데이터 로딩 완료
+inputResult.innerHTML =
+  "버튼을 누르고 말씀해주세요.";
 
 
     // ⭐ 모든 초기 데이터가 준비된 후에만 사용 가능
