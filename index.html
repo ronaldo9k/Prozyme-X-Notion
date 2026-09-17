@@ -890,84 +890,36 @@
     }
 
 
-/* ========================================================================
-   ⭐ statusCard
-   ⭐ 첫 화면 하단 상태 표시 영역
-   ======================================================================== */
+    /* ========================================================================
+       ⭐ statusCard
+       ======================================================================== */
 
-#statusCard {
+    #statusCard {
 
-  position: sticky;
+      position: sticky;
 
-  top: 8px;
+      top: 8px;
 
-  z-index: 100;
+      z-index: 100;
 
-  width: 100%;
+      width: 100%;
 
-  min-height: 50px;
+      margin-top: 8px;
 
-  margin-top: 8px;
+      background:
+        rgba(255,255,255,.97);
 
-  box-sizing: border-box;
+      box-shadow:
+        0 10px 30px rgba(0,0,0,.38);
 
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  padding: 12px 20px;
-
-  background:
-    rgba(5, 7, 11, 0.72);
-
-  border:
-    1px solid rgba(255, 215, 0, 0.20);
-
-  border-radius: 22px;
-
-  box-shadow:
-    0 10px 30px rgba(0,0,0,.38),
-    inset 0 1px 0 rgba(255,255,255,.06);
-
-  backdrop-filter: blur(10px);
-
-  -webkit-backdrop-filter: blur(10px);
-
-  color: #ffffff;
-
-  text-align: center;
-
-  line-height: 1.6;
-
-}
+    }
 
 
-/* ⭐ 상태 표시 안의 내용도 정확히 가운데 */
+    button:disabled {
 
-#statusCard #inputResult {
+      cursor: not-allowed;
 
-  width: 100%;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  text-align: center;
-
-}
-
-
-/* ⭐ 버튼 비활성화 */
-
-button:disabled {
-
-  cursor: not-allowed;
-
-}
+    }
 
 
     /* ========================================================================
@@ -2099,87 +2051,6 @@ button:disabled {
       white-space: nowrap;
     }
 
-
-
-    /* 🆕 입고/출고 선택된 버튼을 색으로 구분 */
-.transaction-mode-button.selected {
-  border: 2px solid #15803d;       /* 기존 1.5px → 2px, 색상은 진한 녹색 */
-  background: #ecfdf3;            /* 배경은 연한 녹색 */
-  color: #15803d;                 /* 글자도 진한 녹색 */
-}
-
-.transaction-mode-button.selected:hover {
-  background: #d1fae5;            /* 마우스 올리면 좀 더 진하게 */
-}
-
-
-    /* 🆕 거래처 검색 / 거래처 선택 버튼 폭 동일 (PC·태블릿) */
-.client-choice-row {
-  grid-template-columns:
-    minmax(0, 1fr)
-    minmax(0, 1fr);
-}
-
-/* 🆕 모바일(500px 이하)에서는 검색이 더 넓고, 선택은 좁게 유지 */
-@media (max-width: 500px) {
-  .client-choice-row {
-    grid-template-columns:
-      minmax(0, 1fr)
-      minmax(0, 1fr);
-  }
-/* 2번 해결: 모바일에서 버튼 높이를 줄임 */
-  .client-choice-row button,
-  .client-choice-row input, 
-  .client-choice-row .transaction-mode-button { 
-    padding-top: 6px;    /* 위쪽 내부 여백 단축 */
-    padding-bottom: 6px; /* 아래쪽 내부 여백 단축 */
-    height: auto;        /* 고정 높이가 설정되어 있다면 해제하고 패딩으로 조절 */
-    font-size: 14px;     /* (선택) 모바일 화면에 맞춰 글자 크기도 살짝 줄임 */
-  }
-  
-}
-
- /* ============================================================================
-   ⭐ 앱 시작 시 노션 데이터 로딩 표시
-   ============================================================================ */
-
-.notion-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  text-align: center;
-}
-
-.loading-spinner {
-  width: 30px;
-  height: 30px;
-  border: 4px solid rgba(255, 215, 0, 0.20);
-  border-top-color: #FFD700;
-  border-radius: 50%;
-  animation: notionLoadingSpin 0.8s linear infinite;
-}
-
-.loading-text {
-  width: 100%;
-
-  font-size: 15px;
-  line-height: 1.5;
-
-  text-align: center;
-}
-
-@keyframes notionLoadingSpin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}   
-    
   </style>
 
 </head>
@@ -2325,12 +2196,11 @@ button:disabled {
 
     <div
       id="statusCard"
-        <div id="result">
-
-    
+      class="card"
+    >
 
       <div id="result">
-           버튼을 누르고 말씀해주세요.
+        버튼을 누르고 말씀해주세요.
       </div>
 
     </div>
@@ -2385,224 +2255,7 @@ button:disabled {
 // ============================================================================
 
 const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbzbEokXi6thuRtfw3Mg2bHekKI_rNBvQWXCrimx95j0CAkHbc01NqM5qGnHntckCr66/exec";
-
-
-// ============================================================================
-// ⭐⚡ [속도 개선] 공용 도우미들
-//    1) sleep            : 정해진 시간만큼 쉬는 함수
-//    2) fetchWithTimeout : 서버가 응답이 없으면 정해진 시간에 끊는 함수
-//    3) 캐시 함수들       : 받은 데이터를 휴대폰에 저장해 두었다가 다시 쓰기
-//    4) applyInitialData : 저장해 둔 데이터를 화면 목록에 채우기
-//    5) warmupGasColdStart : 서버를 미리 깨워 두는 함수(웜업)
-// ============================================================================
-
-function sleep(ms) {
-
-  return new Promise(
-    function(resolve) {
-      setTimeout(resolve, ms);
-    }
-  );
-
-}
-
-
-function fetchWithTimeout(ms) {
-
-  if (
-    typeof AbortController === "undefined"
-  ) {
-
-    return undefined;
-
-  }
-
-  const controller =
-    new AbortController();
-
-  setTimeout(
-    function() {
-      controller.abort();
-    },
-    ms
-  );
-
-  return controller.signal;
-
-}
-
-
-const INITIAL_DATA_CACHE_KEY =
-  "procareInitialDataCacheV1";
-
-const INITIAL_DATA_TIMEOUT_MS =
-  24 * 60 * 60 * 1000;
-
-const GAS_RESPONSE_CACHE_MS =
-  5 * 60 * 1000;
-
-
-function readInitialDataCache(
-  key,
-  maxAgeMs
-) {
-
-  try {
-
-    if (!window.localStorage) {
-
-      return null;
-
-    }
-
-    const raw =
-      window.localStorage.getItem(key);
-
-    if (!raw) {
-
-      return null;
-
-    }
-
-    const parsed =
-      JSON.parse(raw);
-
-    if (
-      !parsed ||
-      typeof parsed.savedAt !== "number"
-    ) {
-
-      return null;
-
-    }
-
-    const maxAge =
-      typeof maxAgeMs === "number"
-        ? maxAgeMs
-        : INITIAL_DATA_TIMEOUT_MS;
-
-    if (
-      Date.now() - parsed.savedAt > maxAge
-    ) {
-
-      window.localStorage.removeItem(key);
-
-      return null;
-
-    }
-
-    return parsed.data || null;
-
-  } catch (error) {
-
-    return null;
-
-  }
-
-}
-
-
-function writeInitialDataCache(key, data) {
-
-  try {
-
-    if (!window.localStorage) {
-
-      return;
-
-    }
-
-    window.localStorage.setItem(
-      key,
-      JSON.stringify({
-        savedAt: Date.now(),
-        data: data
-      })
-    );
-
-  } catch (error) {
-
-    // 저장 공간이 부족하면 조용히 건너뜁니다.
-
-  }
-
-}
-
-
-function applyInitialData(data) {
-
-  clientList =
-    Array.isArray(data.clients)
-      ? data.clients.slice()
-      : [];
-
-  productList =
-    Array.isArray(data.products)
-      ? data.products.slice()
-      : [];
-
-  deliveryTypeList =
-    Array.isArray(data.deliveryTypes)
-      ? data.deliveryTypes
-      : [];
-
-  secondDeliveryLocationList =
-    Array.isArray(data.secondDeliveryLocations)
-      ? data.secondDeliveryLocations
-      : [];
-
-  clientList.sort(
-    function(a, b) {
-
-      return String(a.name || "").localeCompare(
-        String(b.name || ""),
-        "ko"
-      );
-
-    }
-  );
-
-  productList =
-    sortProductsByRequestedOrder(
-      productList
-    );
-
-}
-
-
-let gasWarmupStarted = false;
-
-
-function warmupGasColdStart() {
-
-  if (gasWarmupStarted) {
-
-    return;
-
-  }
-
-  gasWarmupStarted = true;
-
-  setTimeout(
-    function() {
-
-      postToGAS({
-        action: "analyze",
-        text: "웜업",
-        mode: "출고",
-        warmup: true
-      }).catch(
-        function() {
-          // 웜업은 실패해도 아무 상관 없습니다.
-        }
-      );
-
-    },
-    3000
-  );
-
-}
+  "https://script.google.com/macros/s/AKfycbz7zZn7TbP2yN75jcCwxpc5k962OR13p1ly_5fc1o5ymmNpkTO2X29GqEesmSclO_FI/exec";
 
 
 // ============================================================================
@@ -2697,10 +2350,6 @@ let selectedTransactionMode = "출고";
  * 현재 미리보기 데이터를 보관합니다.
  */
 let currentPreviewData = null;
-
-// ⭐ 앱 시작 시 Notion 초기 데이터 준비 상태
-let initialDataReady = false;
-let initialDataLoading = false;
 
 
 // ============================================================================
@@ -3427,11 +3076,6 @@ directButton.addEventListener(
 
 
 async function startDirectInput() {
-  if (!initialDataReady) {
-  inputResult.innerHTML =
-    "📦 거래처와 상품정보를 불러오는 중입니다.<br><br>잠시만 기다려주세요.";
-  return;
-}
 
   if (isSending)
     return;
@@ -3805,6 +3449,7 @@ async function startDirectInput() {
 
 }
 
+
 // ============================================================================
 // 🛑 11. 녹음 종료
 // ============================================================================
@@ -3939,156 +3584,53 @@ function finalizeAndSend(text) {
 
 async function postToGAS(payload) {
 
-  // ⭐⭐⭐ [속도 개선 1] 읽기 요청(목록/분석 미리보기)은 잠시 동안
-//        저장해 둔 답을 재사용합니다. 등록(쓰기) 요청은 절대 캐시하지 않습니다.
-  const isReadAction =
-    payload &&
-    (payload.action === "initialData" ||
-     payload.action === "analyze" ||
-     payload.action === "directPreview");
+  const response =
+    await fetch(
+      GAS_URL,
+      {
+        method: "POST",
 
-  const cacheKey = isReadAction
-    ? "gasCache:" +
-      payload.action +
-      ":" +
-      String(payload.text || "")
-    : null;
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
 
-  if (cacheKey && !payload.forceFresh) {
-
-    try {
-
-      const cached =
-        readInitialDataCache(
-          cacheKey,
-          GAS_RESPONSE_CACHE_MS
-        );
-
-      if (cached) {
-
-        console.log(
-          "⚡ 저장해 둔 응답 재사용:",
-          payload.action
-        );
-
-        return cached;
+        body:
+          JSON.stringify(payload)
 
       }
-
-    } catch (cacheError) {
-
-      // 캐시를 못 읽어도 새로 받으면 됩니다.
-
-    }
-
-  }
-
-  // ⭐⭐⭐ [속도 개선 2] 읽기 요청은 최대 20초만 기다리고,
-//        실패하면 최대 3번까지 다시 시도합니다.
-//        등록(쓰기) 요청은 두 번 등록되는 사고가 생기면 안 되므로
-//        원래 방식 그대로(재시도 없음) 진행합니다.
-  const maxAttempts =
-    isReadAction ? 3 : 1;
-
-  let lastError = null;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-
-    try {
-
-      const response =
-        await fetch(
-          GAS_URL,
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "text/plain;charset=utf-8"
-            },
-
-            body:
-              JSON.stringify(payload),
-
-            signal:
-              isReadAction
-                ? fetchWithTimeout(20000)
-                : undefined
-
-          }
-        );
+    );
 
 
-      const raw =
-        await response.text();
+  const raw =
+    await response.text();
 
 
-      console.log(
-        "GAS 응답:",
-        raw
-      );
+  console.log(
+    "GAS 응답:",
+    raw
+  );
 
 
-      let data;
+  let data;
 
 
-      try {
+  try {
 
-        data =
-          JSON.parse(raw);
+    data =
+      JSON.parse(raw);
 
-      } catch (jsonError) {
+  } catch (jsonError) {
 
-        throw new Error(
-          "GAS 응답을 읽지 못했습니다.\n\n" +
-          raw
-        );
-
-      }
-
-
-      // ⭐ 성공한 읽기 답은 잠시 저장해 둡니다.
-      if (cacheKey && data && data.status === "success") {
-
-        try {
-
-          writeInitialDataCache(cacheKey, data);
-
-        } catch (cacheWriteError) {
-
-          // 저장이 안 되어도 사용에는 문제가 없습니다.
-
-        }
-
-      }
-
-
-      return data;
-
-    } catch (attemptError) {
-
-      lastError = attemptError;
-
-      console.warn(
-        "⚠️ GAS 요청 실패 (시도 " + attempt + "/" + maxAttempts + ")",
-        attemptError && attemptError.message
-          ? attemptError.message
-          : attemptError
-      );
-
-      if (attempt < maxAttempts) {
-
-        await sleep(500 * attempt);
-
-      }
-
-    }
+    throw new Error(
+      "GAS 응답을 읽지 못했습니다.\n\n" +
+      raw
+    );
 
   }
 
 
-  throw lastError ||
-    new Error("GAS에 연결하지 못했습니다.");
+  return data;
 
 }
 
@@ -4183,25 +3725,12 @@ async function sendAnalyzeToGAS(text) {
 
 async function loadInitialData() {
 
-  initialDataLoading = true;
-  initialDataReady = false;
-  
   try {
 
     const data =
       await postToGAS({
-        action: "initialData",
-        forceFresh: true
+        action: "initialData"
       });
-
-
-    // ⭐⭐⭐ [속도 개선 3] 받아온 목록을 휴대폰에 저장해 둡니다.
-//        다음에 앱을 열면 이 저장해 둔 데이터를 먼저 보여주고,
-//        새 데이터는 조용히 그 뒤에 받아서 바꿔치기합니다.
-    writeInitialDataCache(
-      INITIAL_DATA_CACHE_KEY,
-      data
-    );
 
 
     if (
@@ -4262,17 +3791,7 @@ async function loadInitialData() {
       sortProductsByRequestedOrder(
         productList
       );
-    // ⭐⭐⭐ [속도 개선 4] 서버를 미리 깨워 둡니다(웜업).
-//        덕분에 나중에 음성을 말할 때 첫 분석이 빨라집니다.
-    warmupGasColdStart();
 
-    // ⭐⭐⭐ 앱 시작 시 필요한 초기 데이터가 모두 준비되었습니다.
-    initialDataReady = true;
-    initialDataLoading = false;
-
-    console.log(
-      "✅ 앱 초기 데이터 준비 완료"
-    );
 
     console.log(
       "거래처 수:",
@@ -4375,34 +3894,20 @@ async function loadInitialData() {
 
   } catch (error) {
 
-    initialDataLoading = false;
-    initialDataReady = false;
-    
     console.error(
       "초기 데이터 오류:",
       error
     );
 
 
-    // ⭐⭐⭐ [속도 개선 5] 저장해 둔 데이터가 있으면
-//        무서운 빨간 에러 대신 안내 문구를 보여줍니다.
-    if (readInitialDataCache(INITIAL_DATA_CACHE_KEY)) {
-
-      inputResult.innerHTML =
-        "⚡ 저장해 둔 거래처 / 제품으로 계속할 수 있어요.<br><br>새로운 정보는 인터넷이 안정되면 자동으로 업데이트됩니다.";
-
-    } else {
-
-      inputResult.innerHTML =
-        '<div class="error">' +
-        '❌ 거래처 / 제품 목록을 가져오지 못했습니다.<br><br>' +
-        escapeHtml(
-          error.message ||
-          String(error)
-        ) +
-        '</div>';
-
-    }
+    inputResult.innerHTML =
+      '<div class="error">' +
+      '❌ 거래처 / 제품 목록을 가져오지 못했습니다.<br><br>' +
+      escapeHtml(
+        error.message ||
+        String(error)
+      ) +
+      '</div>';
 
   }
 
@@ -5602,6 +5107,7 @@ function showPreview(data) {
   previewResult.innerHTML =
     html;
 
+
   // ⭐ 거래처 전체 선택 화면
   const clientPicker =
     document.createElement("div");
@@ -6014,12 +5520,6 @@ function setupClientSearch(
 
           renderCandidates();
 
-            document
-    .getElementById(
-      "clientSearchInput"
-    )
-    .focus();
-
         }
 
       }
@@ -6363,6 +5863,7 @@ function setupClientSearch(
   }
 
 }
+
 
 // ============================================================================
 // 📦 16-2. 기본 제품 = 푸로찜 15 KG
@@ -7116,141 +6617,10 @@ function escapeAttribute(
 
 
 // ============================================================================
-// 🚀 20-1. 앱 시작 준비
-// ⭐ 앱이 열리자마자 거래처 / 제품 / 선택 목록을 먼저 준비합니다.
-// ============================================================================
-
-async function initializeApp() {
-
-  // ⭐⭐⭐ [속도 개선 3] 휴대폰에 저장해 둔 데이터가 있으면
-//        서버에게 물어보기 전에 먼저 보여줍니다(즉시 시작).
-  const cachedInitial =
-    readInitialDataCache(INITIAL_DATA_CACHE_KEY);
-
-  if (cachedInitial) {
-
-    try {
-
-      applyInitialData(cachedInitial);
-
-      initialDataReady = true;
-
-      inputResult.innerHTML =
-        "버튼을 누르고 말씀해주세요. ⚡";
-
-      console.log(
-        "⚡ 저장해 둔 데이터로 먼저 시작합니다"
-      );
-
-    } catch (cacheApplyError) {
-
-      initialDataReady = false;
-
-    }
-
-  }
-
-  initialDataLoading = true;
-  initialDataReady = cachedInitial ? true : false;
-
-
-  // ⭐ 첫 화면에서 준비 중이라는 것을 바로 보여줍니다.
-inputResult.innerHTML =
-  '<div class="notion-loading">' +
-    '<div class="loading-spinner"></div>' +
-    '<div class="loading-text">노션 데이터 정보를 불러오고 있습니다...</div>' +
-  '</div>';
-
-
-  // ⭐ 초기 데이터가 준비될 때까지 주요 입력 버튼을 잠시 막습니다.
-//  startButton.disabled = true;
-//  directButton.disabled = true;
-//  inboundModeButton.disabled = true;
-//  outboundModeButton.disabled = true;
-
-
-  try {
-
-    await loadInitialData();
-
-
-    if (!initialDataReady) {
-
-      if (cachedInitial) {
-
-        // ⭐⭐⭐ 새 데이터를 못 받았어도
-//        저장해 둔 데이터가 있으면 그대로 사용합니다.
-        initialDataReady = true;
-
-        inputResult.innerHTML =
-          "버튼을 누르고 말씀해주세요. ⚡";
-
-        console.warn(
-          "새 데이터를 못 받았지만 저장해 둔 데이터로 계속합니다."
-        );
-
-      } else {
-
-        throw new Error(
-          "초기 데이터 준비에 실패했습니다."
-        );
-
-      }
-
-    }
-    // ⭐ 노션 데이터 로딩 완료
-inputResult.innerHTML =
-  "버튼을 누르고 말씀해주세요.";
-
-
-    // ⭐ 모든 초기 데이터가 준비된 후에만 사용 가능
-//    startButton.disabled = false;
-//    directButton.disabled = false;
-//    inboundModeButton.disabled = false;
-//    outboundModeButton.disabled = false;
-
-
-    inputResult.innerHTML =
-      "버튼을 누르고 말씀해주세요.";
-
-
-    console.log(
-      "🚀 앱 사용 준비 완료"
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "앱 시작 준비 오류:",
-      error
-    );
-
-
-    startButton.disabled = true;
-    directButton.disabled = true;
-    inboundModeButton.disabled = true;
-    outboundModeButton.disabled = true;
-
-
-    inputResult.innerHTML =
-      '<div class="error">' +
-        '❌ 거래처 / 제품 정보를 준비하지 못했습니다.<br><br>' +
-        escapeHtml(
-          error.message ||
-          String(error)
-        ) +
-      '</div>';
-
-  }
-
-}
-  
-// ============================================================================
 // ⭐ 20. 페이지 처음 열렸을 때
 // ============================================================================
 
-initializeApp();
+loadInitialData();
 
 
 </script>
