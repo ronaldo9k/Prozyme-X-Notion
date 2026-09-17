@@ -2091,7 +2091,41 @@
   
 }
 
-    
+ /* ============================================================================
+   ⭐ 앱 시작 시 노션 데이터 로딩 표시
+   ============================================================================ */
+
+.notion-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 4px solid rgba(255, 255, 255, 0.18);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: notionLoadingSpin 0.8s linear infinite;
+}
+
+.loading-text {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+@keyframes notionLoadingSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}   
     
   </style>
 
@@ -6637,10 +6671,93 @@ function escapeAttribute(
 
 
 // ============================================================================
+// 🚀 20-1. 앱 시작 준비
+// ⭐ 앱이 열리자마자 거래처 / 제품 / 선택 목록을 먼저 준비합니다.
+// ============================================================================
+
+async function initializeApp() {
+
+  initialDataLoading = true;
+  initialDataReady = false;
+
+
+  // ⭐ 첫 화면에서 준비 중이라는 것을 바로 보여줍니다.
+inputResult.innerHTML =
+  '<div class="notion-loading">' +
+    '<div class="loading-spinner"></div>' +
+    '<div class="loading-text">노션 데이터 정보를 불러오고 있습니다...</div>' +
+  '</div>';
+
+
+  // ⭐ 초기 데이터가 준비될 때까지 주요 입력 버튼을 잠시 막습니다.
+//  startButton.disabled = true;
+//  directButton.disabled = true;
+//  inboundModeButton.disabled = true;
+//  outboundModeButton.disabled = true;
+
+
+  try {
+
+    await loadInitialData();
+
+
+    if (!initialDataReady) {
+
+      throw new Error(
+        "초기 데이터 준비에 실패했습니다."
+      );
+
+    }
+
+
+    // ⭐ 모든 초기 데이터가 준비된 후에만 사용 가능
+//    startButton.disabled = false;
+//    directButton.disabled = false;
+//    inboundModeButton.disabled = false;
+//    outboundModeButton.disabled = false;
+
+
+    inputResult.innerHTML =
+      "버튼을 누르고 말씀해주세요.";
+
+
+    console.log(
+      "🚀 앱 사용 준비 완료"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "앱 시작 준비 오류:",
+      error
+    );
+
+
+    startButton.disabled = true;
+    directButton.disabled = true;
+    inboundModeButton.disabled = true;
+    outboundModeButton.disabled = true;
+
+
+    inputResult.innerHTML =
+      '<div class="error">' +
+        '❌ 거래처 / 제품 정보를 준비하지 못했습니다.<br><br>' +
+        escapeHtml(
+          error.message ||
+          String(error)
+        ) +
+      '</div>';
+
+  }
+
+}
+  
+// ============================================================================
 // ⭐ 20. 페이지 처음 열렸을 때
 // ============================================================================
 
-loadInitialData();
+initializeApp();
 
 
 </script>
