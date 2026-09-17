@@ -2051,35 +2051,6 @@
       white-space: nowrap;
     }
 
-    /* 🆕 입고/출고 선택된 버튼을 색으로 구분 */
-.transaction-mode-button.selected {
-  border: 2px solid #15803d;       /* 기존 1.5px → 2px, 색상은 진한 녹색 */
-  background: #ecfdf3;            /* 배경은 연한 녹색 */
-  color: #15803d;                 /* 글자도 진한 녹색 */
-}
-
-.transaction-mode-button.selected:hover {
-  background: #d1fae5;            /* 마우스 올리면 좀 더 진하게 */
-}
-
-
-    /* 🆕 거래처 검색 / 거래처 선택 버튼 폭 동일 (PC·태블릿) */
-.client-choice-row {
-  grid-template-columns:
-    minmax(0, 1fr)
-    minmax(0, 1fr);
-}
-
-/* 🆕 모바일(500px 이하)에서는 검색이 더 넓고, 선택은 좁게 유지 */
-@media (max-width: 500px) {
-  .client-choice-row {
-    grid-template-columns:
-      minmax(0, 1fr)
-      minmax(0, 1fr);
-  }
-}
-
-
   </style>
 
 </head>
@@ -2285,6 +2256,223 @@
 
 const GAS_URL =
   "https://script.google.com/macros/s/AKfycbz7zZn7TbP2yN75jcCwxpc5k962OR13p1ly_5fc1o5ymmNpkTO2X29GqEesmSclO_FI/exec";
+
+
+// ============================================================================
+// ⭐⚡ [속도 개선] 공용 도우미들
+//    1) sleep            : 정해진 시간만큼 쉬는 함수
+//    2) fetchWithTimeout : 서버가 응답이 없으면 정해진 시간에 끊는 함수
+//    3) 캐시 함수들       : 받은 데이터를 휴대폰에 저장해 두었다가 다시 쓰기
+//    4) applyInitialData : 저장해 둔 데이터를 화면 목록에 채우기
+//    5) warmupGasColdStart : 서버를 미리 깨워 두는 함수(웜업)
+// ============================================================================
+
+function sleep(ms) {
+
+  return new Promise(
+    function(resolve) {
+      setTimeout(resolve, ms);
+    }
+  );
+
+}
+
+
+function fetchWithTimeout(ms) {
+
+  if (
+    typeof AbortController === "undefined"
+  ) {
+
+    return undefined;
+
+  }
+
+  const controller =
+    new AbortController();
+
+  setTimeout(
+    function() {
+      controller.abort();
+    },
+    ms
+  );
+
+  return controller.signal;
+
+}
+
+
+const INITIAL_DATA_CACHE_KEY =
+  "procareInitialDataCacheV1";
+
+const INITIAL_DATA_TIMEOUT_MS =
+  24 * 60 * 60 * 1000;
+
+const GAS_RESPONSE_CACHE_MS =
+  5 * 60 * 1000;
+
+
+function readInitialDataCache(
+  key,
+  maxAgeMs
+) {
+
+  try {
+
+    if (!window.localStorage) {
+
+      return null;
+
+    }
+
+    const raw =
+      window.localStorage.getItem(key);
+
+    if (!raw) {
+
+      return null;
+
+    }
+
+    const parsed =
+      JSON.parse(raw);
+
+    if (
+      !parsed ||
+      typeof parsed.savedAt !== "number"
+    ) {
+
+      return null;
+
+    }
+
+    const maxAge =
+      typeof maxAgeMs === "number"
+        ? maxAgeMs
+        : INITIAL_DATA_TIMEOUT_MS;
+
+    if (
+      Date.now() - parsed.savedAt > maxAge
+    ) {
+
+      window.localStorage.removeItem(key);
+
+      return null;
+
+    }
+
+    return parsed.data || null;
+
+  } catch (error) {
+
+    return null;
+
+  }
+
+}
+
+
+function writeInitialDataCache(key, data) {
+
+  try {
+
+    if (!window.localStorage) {
+
+      return;
+
+    }
+
+    window.localStorage.setItem(
+      key,
+      JSON.stringify({
+        savedAt: Date.now(),
+        data: data
+      })
+    );
+
+  } catch (error) {
+
+    // 저장 공간이 부족하면 조용히 건너뜁니다.
+
+  }
+
+}
+
+
+function applyInitialData(data) {
+
+  clientList =
+    Array.isArray(data.clients)
+      ? data.clients.slice()
+      : [];
+
+  productList =
+    Array.isArray(data.products)
+      ? data.products.slice()
+      : [];
+
+  deliveryTypeList =
+    Array.isArray(data.deliveryTypes)
+      ? data.deliveryTypes
+      : [];
+
+  secondDeliveryLocationList =
+    Array.isArray(data.secondDeliveryLocations)
+      ? data.secondDeliveryLocations
+      : [];
+
+  clientList.sort(
+    function(a, b) {
+
+      return String(a.name || "").localeCompare(
+        String(b.name || ""),
+        "ko"
+      );
+
+    }
+  );
+
+  productList =
+    sortProductsByRequestedOrder(
+      productList
+    );
+
+}
+
+
+let gasWarmupStarted = false;
+
+
+function warmupGasColdStart() {
+
+  if (gasWarmupStarted) {
+
+    return;
+
+  }
+
+  gasWarmupStarted = true;
+
+  setTimeout(
+    function() {
+
+      postToGAS({
+        action: "analyze",
+        text: "웜업",
+        mode: "출고",
+        warmup: true
+      }).catch(
+        function() {
+          // 웜업은 실패해도 아무 상관 없습니다.
+        }
+      );
+
+    },
+    3000
+  );
+
+}
 
 
 // ============================================================================
@@ -3613,53 +3801,156 @@ function finalizeAndSend(text) {
 
 async function postToGAS(payload) {
 
-  const response =
-    await fetch(
-      GAS_URL,
-      {
-        method: "POST",
+  // ⭐⭐⭐ [속도 개선 1] 읽기 요청(목록/분석 미리보기)은 잠시 동안
+  //        저장해 둔 답을 재사용합니다. 등록(쓰기) 요청은 절대 캐시하지 않습니다.
+  const isReadAction =
+    payload &&
+    (payload.action === "initialData" ||
+     payload.action === "analyze" ||
+     payload.action === "directPreview");
 
-        headers: {
-          "Content-Type":
-            "text/plain;charset=utf-8"
-        },
+  const cacheKey = isReadAction
+    ? "gasCache:" +
+      payload.action +
+      ":" +
+      String(payload.text || "")
+    : null;
 
-        body:
-          JSON.stringify(payload)
+  if (cacheKey && !payload.forceFresh) {
+
+    try {
+
+      const cached =
+        readInitialDataCache(
+          cacheKey,
+          GAS_RESPONSE_CACHE_MS
+        );
+
+      if (cached) {
+
+        console.log(
+          "⚡ 저장해 둔 응답 재사용:",
+          payload.action
+        );
+
+        return cached;
 
       }
-    );
+
+    } catch (cacheError) {
+
+      // 캐시를 못 읽어도 새로 받으면 됩니다.
+
+    }
+
+  }
+
+  // ⭐⭐⭐ [속도 개선 2·3] 읽기 요청은 최대 20초만 기다리고,
+  //        실패하면 최대 3번까지 다시 시도합니다.
+  //        등록(쓰기) 요청은 두 번 등록되는 사고가 생기면 안 되므로
+  //        원래 방식 그대로(재시도 없음) 진행합니다.
+  const maxAttempts =
+    isReadAction ? 3 : 1;
+
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+
+    try {
+
+      const response =
+        await fetch(
+          GAS_URL,
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "text/plain;charset=utf-8"
+            },
+
+            body:
+              JSON.stringify(payload),
+
+            signal:
+              isReadAction
+                ? fetchWithTimeout(20000)
+                : undefined
+
+          }
+        );
 
 
-  const raw =
-    await response.text();
+      const raw =
+        await response.text();
 
 
-  console.log(
-    "GAS 응답:",
-    raw
-  );
+      console.log(
+        "GAS 응답:",
+        raw
+      );
 
 
-  let data;
+      let data;
 
 
-  try {
+      try {
 
-    data =
-      JSON.parse(raw);
+        data =
+          JSON.parse(raw);
 
-  } catch (jsonError) {
+      } catch (jsonError) {
 
-    throw new Error(
-      "GAS 응답을 읽지 못했습니다.\n\n" +
-      raw
-    );
+        throw new Error(
+          "GAS 응답을 읽지 못했습니다.\n\n" +
+          raw
+        );
+
+      }
+
+
+      // ⭐ 성공한 읽기 답은 잠시 저장해 둡니다.
+      if (cacheKey && data && data.status === "success") {
+
+        try {
+
+          writeInitialDataCache(cacheKey, data);
+
+        } catch (cacheWriteError) {
+
+          // 저장이 안 되어도 사용에는 문제가 없습니다.
+
+        }
+
+      }
+
+
+      return data;
+
+    } catch (attemptError) {
+
+      lastError = attemptError;
+
+      console.warn(
+        "⚠️ GAS 요청 실패 (시도 " + attempt + "/" + maxAttempts + ")",
+        attemptError && attemptError.message
+          ? attemptError.message
+          : attemptError
+      );
+
+      if (attempt < maxAttempts) {
+
+        await sleep(500 * attempt);
+
+      }
+
+    }
 
   }
 
 
-  return data;
+  throw lastError ||
+    new Error("GAS에 연결하지 못했습니다.");
 
 }
 
@@ -3758,8 +4049,18 @@ async function loadInitialData() {
 
     const data =
       await postToGAS({
-        action: "initialData"
+        action: "initialData",
+        forceFresh: true
       });
+
+
+    // ⭐⭐⭐ [속도 개선] 받아온 목록을 휴대폰에 저장해 둡니다.
+    //        다음에 앱을 열면 이 저장해 둔 데이터를 먼저 보여주고,
+    //        새 데이터는 조용히 그 뒤에 받아서 바꿔치기합니다.
+    writeInitialDataCache(
+      INITIAL_DATA_CACHE_KEY,
+      data
+    );
 
 
     if (
@@ -3820,6 +4121,11 @@ async function loadInitialData() {
       sortProductsByRequestedOrder(
         productList
       );
+
+
+    // ⭐⭐⭐ [속도 개선] 서버를 미리 깨워 둡니다(웜업).
+    //        덕분에 나중에 음성을 말할 때 첫 분석이 빨라집니다.
+    warmupGasColdStart();
 
 
     console.log(
@@ -3929,14 +4235,25 @@ async function loadInitialData() {
     );
 
 
-    inputResult.innerHTML =
-      '<div class="error">' +
-      '❌ 거래처 / 제품 목록을 가져오지 못했습니다.<br><br>' +
-      escapeHtml(
-        error.message ||
-        String(error)
-      ) +
-      '</div>';
+    // ⭐⭐⭐ [속도 개선] 저장해 둔 데이터가 있으면
+    //        무서운 빨간 에러 대신 안내 문구를 보여줍니다.
+    if (readInitialDataCache(INITIAL_DATA_CACHE_KEY)) {
+
+      inputResult.innerHTML =
+        "⚡ 저장해 둔 거래처 / 제품으로 계속할 수 있어요.<br><br>새로운 정보는 인터넷이 안정되면 자동으로 업데이트됩니다.";
+
+    } else {
+
+      inputResult.innerHTML =
+        '<div class="error">' +
+        '❌ 거래처 / 제품 목록을 가져오지 못했습니다.<br><br>' +
+        escapeHtml(
+          error.message ||
+          String(error)
+        ) +
+        '</div>';
+
+    }
 
   }
 
@@ -6648,6 +6965,36 @@ function escapeAttribute(
 // ============================================================================
 // ⭐ 20. 페이지 처음 열렸을 때
 // ============================================================================
+
+// ============================================================================
+// ⭐⚡ [속도 개선] 앱 시작
+// 저장해 둔 데이터가 있으면 먼저 보여주고(즉시 시작),
+// 그 뒤에 loadInitialData()가 새 데이터를 조용히 받아와 바꿔치기합니다.
+// ============================================================================
+
+const cachedInitialData =
+  readInitialDataCache(INITIAL_DATA_CACHE_KEY);
+
+if (cachedInitialData) {
+
+  try {
+
+    applyInitialData(cachedInitialData);
+
+    inputResult.innerHTML =
+      "버튼을 누르고 말씀해주세요. ⚡";
+
+    console.log(
+      "⚡ 저장해 둔 데이터로 먼저 시작합니다"
+    );
+
+  } catch (cacheApplyError) {
+
+    // 캐시 적용에 실패하면 그냥 새로 받습니다.
+
+  }
+
+}
 
 loadInitialData();
 
