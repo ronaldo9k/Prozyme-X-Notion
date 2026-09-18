@@ -960,6 +960,156 @@
 
 }
 
+/* ⭐ 첫 화면 하단 FENOMENO RONALDO 9 전용 디자인 */
+#statusCard .fenomeno-status-text {
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-size: 22px;
+  font-weight: 1000;
+  font-style: italic;
+  letter-spacing: 2.2px;
+  color: #f4cf62;
+  text-shadow:
+    0 1px 0 #fff2ad,
+    0 3px 0 #a8740c,
+    0 5px 10px rgba(0,0,0,.92),
+    0 0 18px rgba(244,190,40,.42);
+  -webkit-text-stroke: .35px rgba(255,231,143,.72);
+}
+
+/* ⭐ STEP 2 상단 Notion 준비 상태바 */
+.step2-notion-status {
+  width: 100%;
+  min-height: 46px;
+  margin: 0 0 14px;
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid rgba(201,162,39,.35);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(8,10,14,.96), rgba(25,22,13,.94));
+  color: #f5f5f5;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.25;
+  text-align: center;
+  box-shadow: 0 5px 14px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.step2-notion-spinner {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  border: 3px solid rgba(255,215,0,.20);
+  border-top-color: #FFD700;
+  border-right-color: #e8bc3f;
+  border-radius: 50%;
+  animation: step2NotionSpin .75s linear infinite;
+}
+
+.step2-notion-status.ready {
+  border-color: rgba(21,128,61,.48);
+  background: linear-gradient(135deg, rgba(8,20,13,.96), rgba(13,30,20,.94));
+  color: #bbf7d0;
+}
+
+.step2-notion-status.ready .step2-notion-spinner {
+  display: none;
+}
+
+.step2-notion-check {
+  color: #4ade80;
+  font-size: 18px;
+  line-height: 1;
+}
+
+@keyframes step2NotionSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ⭐ STEP 2의 기존 Select는 내부 기능용으로만 유지하고 화면에서는 숨깁니다. */
+.quick-select-hidden {
+  display: none !important;
+}
+
+.quick-date-input-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* ⭐ STEP 2 선택값을 한 번에 누르는 버튼 목록 */
+.quick-option-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.quick-option-button {
+  flex: 1 1 auto;
+  width: auto !important;
+  min-width: 90px;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  border: 1px solid #d7dce2 !important;
+  border-radius: 10px !important;
+  background: #f8fafc !important;
+  color: #374151 !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.quick-option-button.selected {
+  border: 2px solid #15803d !important;
+  background: #ecfdf3 !important;
+  color: #15803d !important;
+}
+
+.quick-date-buttons .quick-option-button {
+  min-width: 72px;
+}
+
+/* ⭐ 선택된 거래처 오른쪽 X 버튼 */
+.selected-client {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.selected-client-text {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.selected-client-clear {
+  flex: 0 0 auto;
+  width: 28px !important;
+  min-width: 28px !important;
+  max-width: 28px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid #bbf7d0 !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  color: #166534 !important;
+  font-size: 17px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
 
 /* ⭐ 버튼 비활성화 */
 
@@ -2027,6 +2177,12 @@ button:disabled {
 
       }
 
+      .quick-option-button {
+        min-width: 78px;
+        padding: 9px 8px !important;
+        font-size: 13px !important;
+      }
+
     }
 
 
@@ -2520,8 +2676,7 @@ button:disabled {
     
 
       <div id="result">
-        FENOMENO RONALDO 9
-          
+        <span class="fenomeno-status-text">FENOMENO RONALDO 9</span>
       </div>
 
     </div>
@@ -3491,6 +3646,33 @@ function findClientLocalFromVoice(text) {
   if (exact.length === 1) return exact[0];
   if (exact.length > 1) return null;
 
+  // ⭐ 짧게 말한 거래처 이름도 바로 찾습니다.
+  // 예: "미노" → "미노유통"
+  const voiceKeyword = normalized
+    .replace(/(박스|개|통|팩|수량|주세요|부탁해요|부탁합니다)/g, "")
+    .replace(/\d+/g, "")
+    .trim();
+
+  if (voiceKeyword.length >= 2) {
+    const prefixMatches = clientList.filter(function(client) {
+      const name = String(client.name || "")
+        .toLowerCase()
+        .replace(/\s+/g, "");
+      return name && name.startsWith(voiceKeyword);
+    });
+
+    if (prefixMatches.length === 1) return prefixMatches[0];
+
+    if (prefixMatches.length > 1) {
+      prefixMatches.sort(function(a,b) {
+        return String(a.name || "").length - String(b.name || "").length;
+      });
+      if (String(prefixMatches[0].name || "").length < String(prefixMatches[1].name || "").length) {
+        return prefixMatches[0];
+      }
+    }
+  }
+
   // ⭐ 짧은 음성에서도 작은 오인식을 견디기 위한 간단한 편집거리 검색
   function distance(a,b) {
     const dp = Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));
@@ -3951,6 +4133,7 @@ function applyClientList(clients) {
 async function loadClientDataForStep2() {
 
   initialDataLoading = true;
+  updateStep2NotionStatus(false);
 
   // ⭐ STEP 2에 들어왔을 때만 기존 거래처 캐시를 먼저 적용합니다.
   const cached = readClientCache();
@@ -3980,6 +4163,7 @@ async function loadClientDataForStep2() {
 
     initialDataReady = clientList.length > 0;
     initialDataLoading = false;
+    updateStep2NotionStatus(initialDataReady);
 
     console.log("✅ STEP 2 거래처 데이터 준비 완료");
     console.log("거래처 수:", clientList.length);
@@ -4015,6 +4199,7 @@ async function loadClientDataForStep2() {
   } catch (error) {
 
     initialDataLoading = false;
+    updateStep2NotionStatus(clientList.length > 0);
 
     initialDataReady = clientList.length > 0;
 
@@ -4711,8 +4896,9 @@ if (
       '</div>' +
 
 
-    '<div class="preview-title">' +
-      '📝 등록 내용을 확인해주세요' +
+    '<div id="step2NotionStatus" class="step2-notion-status">' +
+      '<span class="step2-notion-spinner"></span>' +
+      '<span id="step2NotionStatusText">Notion 거래처 정보를 가져오는중</span>' +
     '</div>' +
 
 
@@ -4851,10 +5037,10 @@ if (
 
         (
           client
-            ? "✅ 선택된 거래처: " +
-              escapeHtml(
-                client.name
-              )
+            ? '<span class="selected-client-text">✅ 선택된 거래처: ' +
+              escapeHtml(client.name) +
+              '</span>' +
+              '<button type="button" id="selectedClientClearButton" class="selected-client-clear" title="거래처 선택 삭제" onclick="clearSelectedClient()">×</button>'
             : ""
         ) +
 
@@ -4882,12 +5068,14 @@ if (
 
       '<select ' +
         'id="productSelect" ' +
-        'class="edit-select"' +
+        'class="edit-select quick-select-hidden"' +
       '>' +
 
         productOptions +
 
       '</select>' +
+
+      '<div id="productQuickButtons" class="quick-option-buttons"></div>' +
 
       '<div class="help-text">' +
         '표시 순서: 푸로찜 15 KG → 20 KG → 12 KG' +
@@ -4955,7 +5143,7 @@ if (
 
       '<select ' +
         'id="modeSelect" ' +
-        'class="edit-select"' +
+        'class="edit-select quick-select-hidden"' +
       '>' +
 
         '<option value="출고"' +
@@ -4985,6 +5173,8 @@ if (
 
       '</select>' +
 
+      '<div id="modeQuickButtons" class="quick-option-buttons"></div>' +
+
     '</div>' +
 
 
@@ -4996,7 +5186,7 @@ if (
 
       '<input ' +
         'id="deliveryDateInput" ' +
-        'class="edit-input" ' +
+        'class="edit-input quick-date-input-hidden" ' +
         'type="date" ' +
         'value="' +
           escapeAttribute(
@@ -5005,6 +5195,8 @@ if (
           ) +
         '"' +
       '>' +
+
+      '<div id="dateQuickButtons" class="quick-option-buttons quick-date-buttons"></div>' +
 
     '</div>' +
 
@@ -5017,12 +5209,14 @@ if (
 
       '<select ' +
         'id="deliveryTypeSelect" ' +
-        'class="edit-select"' +
+        'class="edit-select quick-select-hidden"' +
       '>' +
 
         deliveryTypeOptions +
 
       '</select>' +
+
+      '<div id="deliveryTypeQuickButtons" class="quick-option-buttons"></div>' +
 
       '<div class="help-text">' +
         '기본값은 "직송"입니다.' +
@@ -5039,12 +5233,14 @@ if (
 
       '<select ' +
         'id="secondDeliverySelect" ' +
-        'class="edit-select"' +
+        'class="edit-select quick-select-hidden"' +
       '>' +
 
         secondDeliveryOptions +
 
       '</select>' +
+
+      '<div id="secondDeliveryQuickButtons" class="quick-option-buttons"></div>' +
 
       '<div class="help-text">' +
         '필요할 때만 선택하세요.' +
@@ -5134,6 +5330,7 @@ if (
 
 
   showResultScreen();
+  updateStep2NotionStatus(initialDataReady);
 
 
   const productSelect =
@@ -5199,6 +5396,14 @@ if (
   );
 
   setupClientVoiceButton();
+  setupStep2QuickOptionButtons();
+
+  const selectedClientClearButton = document.getElementById("selectedClientClearButton");
+  if (selectedClientClearButton) {
+    selectedClientClearButton.addEventListener("click", function() {
+      clearSelectedClient();
+    });
+  }
 
   // ⭐ 거래처 전체 선택 화면 열기 / 뒤로가기
   const clientPickerButton =
@@ -5259,7 +5464,7 @@ if (
           const selectedBox = document.getElementById("selectedClient");
           if (selectedBox) {
             selectedBox.style.display = "block";
-            selectedBox.innerHTML = "✅ 선택된 거래처: " + escapeHtml(selectedClient.name);
+            selectedBox.innerHTML = '<span class="selected-client-text">✅ 선택된 거래처: ' + escapeHtml(selectedClient.name) + '</span>' + '<button type="button" id="selectedClientClearButton" class="selected-client-clear" title="거래처 선택 삭제" onclick="clearSelectedClient()">×</button>';
           }
 
           clientPickerButton.textContent = "🏢 " + selectedClient.name;
@@ -5365,6 +5570,9 @@ step2ImmediateUpdateIds.forEach(function(id) {
 
       // ⭐ 기존 화면 요약도 즉시 갱신
       renderTransactionSummary();
+
+      // ⭐ 날짜를 직접 선택한 경우에도 버튼 표시를 즉시 갱신
+      setupStep2QuickOptionButtons();
 
     }
   );
@@ -5480,6 +5688,144 @@ step2ImmediateUpdateIds.forEach(function(id) {
 
 }
 
+
+// ============================================================================
+// ⭐ 16-0-1. STEP 2 빠른 선택 버튼
+//
+// 버튼을 누르는 즉시 숨겨진 기존 Select/Input 값에 반영합니다.
+// 기존 등록 로직은 그대로 이 값을 사용합니다.
+// ============================================================================
+
+function buildQuickOptionButtons(containerId, options, selectedValue, onSelect) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = (options || []).map(function(option) {
+    const value = String(option.value == null ? option : option.value);
+    const label = String(option.label == null ? option : option.label);
+    const selected = String(value) === String(selectedValue || "") ? " selected" : "";
+    return '<button type="button" class="quick-option-button' + selected + '" data-value="' + escapeAttribute(value) + '">' + escapeHtml(label) + '</button>';
+  }).join("");
+
+  container.querySelectorAll(".quick-option-button").forEach(function(button) {
+    button.addEventListener("click", function() {
+      onSelect(button.getAttribute("data-value"));
+    });
+  });
+}
+
+function setupStep2QuickOptionButtons() {
+  const productSelect = document.getElementById("productSelect");
+  const modeSelect = document.getElementById("modeSelect");
+  const deliveryDateInput = document.getElementById("deliveryDateInput");
+  const deliveryTypeSelect = document.getElementById("deliveryTypeSelect");
+  const secondDeliverySelect = document.getElementById("secondDeliverySelect");
+
+  if (productSelect) {
+    buildQuickOptionButtons("productQuickButtons", productList.map(function(product) {
+      return {value: product.id, label: product.name};
+    }), productSelect.value, function(value) {
+      productSelect.value = value;
+      productSelect.dispatchEvent(new Event("change", {bubbles:true}));
+      setupStep2QuickOptionButtons();
+    });
+  }
+
+  if (modeSelect) {
+    buildQuickOptionButtons("modeQuickButtons", [
+      {value:"출고", label:"📤 출고"},
+      {value:"입고", label:"📥 입고"}
+    ], modeSelect.value, function(value) {
+      modeSelect.value = value;
+      modeSelect.dispatchEvent(new Event("change", {bubbles:true}));
+      setupStep2QuickOptionButtons();
+    });
+  }
+
+  if (deliveryDateInput) {
+    const base = new Date();
+    const dates = [0,1,2,3,4,5,6].map(function(offset) {
+      const d = new Date(base);
+      d.setDate(d.getDate() + offset);
+      const value = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+      const label = offset === 0 ? "오늘" : offset === 1 ? "내일" : offset === 2 ? "모레" : (offset + "일 후");
+      return {value:value, label:label};
+    });
+    dates.push({value:"__calendar__", label:"📅 날짜 선택"});
+    buildQuickOptionButtons("dateQuickButtons", dates, deliveryDateInput.value, function(value) {
+      if (value === "__calendar__") {
+        try {
+          deliveryDateInput.showPicker();
+        } catch (e) {
+          deliveryDateInput.focus();
+        }
+        return;
+      }
+      deliveryDateInput.value = value;
+      deliveryDateInput.dispatchEvent(new Event("change", {bubbles:true}));
+      setupStep2QuickOptionButtons();
+    });
+  }
+
+  if (deliveryTypeSelect) {
+    const options = Array.from(deliveryTypeSelect.options).map(function(option) {
+      return {value:option.value, label:option.textContent};
+    }).filter(function(option) { return option.value; });
+    buildQuickOptionButtons("deliveryTypeQuickButtons", options, deliveryTypeSelect.value, function(value) {
+      deliveryTypeSelect.value = value;
+      deliveryTypeSelect.dispatchEvent(new Event("change", {bubbles:true}));
+      setupStep2QuickOptionButtons();
+    });
+  }
+
+  if (secondDeliverySelect) {
+    const options = Array.from(secondDeliverySelect.options).map(function(option) {
+      return {value:option.value, label:option.textContent};
+    });
+    buildQuickOptionButtons("secondDeliveryQuickButtons", options, secondDeliverySelect.value, function(value) {
+      secondDeliverySelect.value = value;
+      secondDeliverySelect.dispatchEvent(new Event("change", {bubbles:true}));
+      setupStep2QuickOptionButtons();
+    });
+  }
+}
+
+function updateStep2NotionStatus(ready) {
+  const bar = document.getElementById("step2NotionStatus");
+  const text = document.getElementById("step2NotionStatusText");
+  if (!bar || !text) return;
+
+  if (ready) {
+    bar.classList.add("ready");
+    text.textContent = "정보 입력 가능!";
+    bar.insertAdjacentHTML("afterbegin", '<span class="step2-notion-check">✓</span>');
+  } else {
+    bar.classList.remove("ready");
+    text.textContent = "Notion 거래처 정보를 가져오는중";
+    const check = bar.querySelector(".step2-notion-check");
+    if (check) check.remove();
+  }
+}
+
+function clearSelectedClient() {
+  const clientSelect = document.getElementById("clientSelect");
+  const selectedBox = document.getElementById("selectedClient");
+  const searchInput = document.getElementById("clientSearchInput");
+  const pickerButton = document.getElementById("clientPickerButton");
+
+  if (clientSelect) clientSelect.value = "";
+  if (searchInput) searchInput.value = "";
+  if (selectedBox) {
+    selectedBox.style.display = "none";
+    selectedBox.innerHTML = "";
+  }
+  if (pickerButton) pickerButton.textContent = "거래처 선택 ▼";
+  if (currentPreviewData) {
+    currentPreviewData.clientPageId = "";
+    currentPreviewData.clientName = "";
+  }
+  renderTransactionSummary();
+}
 
 // ============================================================================
 // 💰 16-0. 주소 / 단가 / 무게 표시
@@ -5603,7 +5949,7 @@ function setupClientVoiceButton() {
     const pickerButton=document.getElementById("clientPickerButton");
     if(clientSelect) clientSelect.value=client.id;
     if(searchInput) searchInput.value=client.name;
-    if(selectedBox){selectedBox.style.display="block";selectedBox.innerHTML="✅ 선택된 거래처: "+escapeHtml(client.name);}
+    if(selectedBox){selectedBox.style.display="block";selectedBox.innerHTML='<span class="selected-client-text">✅ 선택된 거래처: '+escapeHtml(client.name)+'</span>' + '<button type="button" id="selectedClientClearButton" class="selected-client-clear" title="거래처 선택 삭제" onclick="clearSelectedClient()">×</button>';}
     if(pickerButton) pickerButton.textContent="🏢 "+client.name;
     if(quantityInput) quantityInput.value=finalQuantity;
     if(currentPreviewData){currentPreviewData.clientPageId=client.id;currentPreviewData.clientName=client.name;currentPreviewData.quantity=finalQuantity;}
@@ -6759,7 +7105,7 @@ function resetForNewRecording() {
 
 
   inputResult.innerHTML =
-    "FENOMENO RONALDO 9";
+    '<span class="fenomeno-status-text">FENOMENO RONALDO 9</span>';
 
 
   showInputScreen();
@@ -6944,7 +7290,7 @@ inputResult.innerHTML =
 // ⭐⭐⭐ 첫 화면에서는 거래처 / 제품 / Notion 데이터를 읽지 않습니다.
 // 사용자가 입출고를 선택하고 STEP 2로 들어간 뒤
 // loadClientDataForStep2()가 거래처만 준비합니다.
-inputResult.innerHTML = "FENOMENO RONALDO 9";
+inputResult.innerHTML = '<span class="fenomeno-status-text">FENOMENO RONALDO 9</span>';
 
 
 </script>
