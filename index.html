@@ -960,156 +960,6 @@
 
 }
 
-/* ⭐ 첫 화면 하단 FENOMENO RONALDO 9 전용 디자인 */
-#statusCard .fenomeno-status-text {
-  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-  font-size: 22px;
-  font-weight: 1000;
-  font-style: italic;
-  letter-spacing: 2.2px;
-  color: #f4cf62;
-  text-shadow:
-    0 1px 0 #fff2ad,
-    0 3px 0 #a8740c,
-    0 5px 10px rgba(0,0,0,.92),
-    0 0 18px rgba(244,190,40,.42);
-  -webkit-text-stroke: .35px rgba(255,231,143,.72);
-}
-
-/* ⭐ STEP 2 상단 Notion 준비 상태바 */
-.step2-notion-status {
-  width: 100%;
-  min-height: 46px;
-  margin: 0 0 14px;
-  padding: 9px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  border: 1px solid rgba(201,162,39,.35);
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(8,10,14,.96), rgba(25,22,13,.94));
-  color: #f5f5f5;
-  font-size: 13px;
-  font-weight: 900;
-  line-height: 1.25;
-  text-align: center;
-  box-shadow: 0 5px 14px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.06);
-}
-
-.step2-notion-spinner {
-  width: 18px;
-  height: 18px;
-  flex: 0 0 18px;
-  border: 3px solid rgba(255,215,0,.20);
-  border-top-color: #FFD700;
-  border-right-color: #e8bc3f;
-  border-radius: 50%;
-  animation: step2NotionSpin .75s linear infinite;
-}
-
-.step2-notion-status.ready {
-  border-color: rgba(21,128,61,.48);
-  background: linear-gradient(135deg, rgba(8,20,13,.96), rgba(13,30,20,.94));
-  color: #bbf7d0;
-}
-
-.step2-notion-status.ready .step2-notion-spinner {
-  display: none;
-}
-
-.step2-notion-check {
-  color: #4ade80;
-  font-size: 18px;
-  line-height: 1;
-}
-
-@keyframes step2NotionSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ⭐ STEP 2의 기존 Select는 내부 기능용으로만 유지하고 화면에서는 숨깁니다. */
-.quick-select-hidden {
-  display: none !important;
-}
-
-.quick-date-input-hidden {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-/* ⭐ STEP 2 선택값을 한 번에 누르는 버튼 목록 */
-.quick-option-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 8px;
-}
-
-.quick-option-button {
-  flex: 1 1 auto;
-  width: auto !important;
-  min-width: 90px;
-  margin: 0 !important;
-  padding: 10px 12px !important;
-  border: 1px solid #d7dce2 !important;
-  border-radius: 10px !important;
-  background: #f8fafc !important;
-  color: #374151 !important;
-  font-size: 14px !important;
-  font-weight: 800 !important;
-  line-height: 1.2 !important;
-  text-shadow: none !important;
-  box-shadow: none !important;
-}
-
-.quick-option-button.selected {
-  border: 2px solid #15803d !important;
-  background: #ecfdf3 !important;
-  color: #15803d !important;
-}
-
-.quick-date-buttons .quick-option-button {
-  min-width: 72px;
-}
-
-/* ⭐ 선택된 거래처 오른쪽 X 버튼 */
-.selected-client {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.selected-client-text {
-  min-width: 0;
-  flex: 1 1 auto;
-}
-
-.selected-client-clear {
-  flex: 0 0 auto;
-  width: 28px !important;
-  min-width: 28px !important;
-  max-width: 28px !important;
-  height: 28px !important;
-  min-height: 28px !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 1px solid #bbf7d0 !important;
-  border-radius: 50% !important;
-  background: #fff !important;
-  color: #166534 !important;
-  font-size: 17px !important;
-  font-weight: 900 !important;
-  line-height: 1 !important;
-  text-shadow: none !important;
-  box-shadow: none !important;
-}
-
 
 /* ⭐ 버튼 비활성화 */
 
@@ -2177,12 +2027,6 @@ button:disabled {
 
       }
 
-      .quick-option-button {
-        min-width: 78px;
-        padding: 9px 8px !important;
-        font-size: 13px !important;
-      }
-
     }
 
 
@@ -2517,6 +2361,489 @@ button:disabled {
       
     }
 
+    /* ========================================================================
+       ⭐⭐⭐ 2026-09 추가 (기존 스타일은 하나도 지우지 않고 아래만 더했습니다)
+       ======================================================================== */
+
+    /* ----------------------------------------------------------------------
+       ① 첫 화면 하단 상태 문구 : FENOMENO RONALDO 9
+          - 두껍게 / 황금색 / 빛나는 효과 / 더 큰 글씨 / 감각적인 글씨체
+       ---------------------------------------------------------------------- */
+
+    #statusCard #result .fenomeno-status {
+
+      display: inline-block;
+
+      font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+      font-size: 24px;
+
+      font-weight: 900;
+
+      font-style: normal;
+
+      letter-spacing: 2px;
+
+      line-height: 1.3;
+
+      color: #ffd76a;
+
+      padding: 2px 6px;
+
+      text-shadow:
+        0 0 6px rgba(255,214,106,.85),
+        0 0 18px rgba(255,196,40,.65),
+        0 2px 4px rgba(0,0,0,.85);
+
+      filter:
+        drop-shadow(0 0 10px rgba(255,208,70,.55));
+
+      animation:
+        fenomenoGlow 2.4s ease-in-out infinite;
+
+    }
+
+
+    /* ⭐ 배경이 빛나듯 반짝이는 효과 */
+
+    @keyframes fenomenoGlow {
+
+      0%, 100% {
+
+        filter:
+          drop-shadow(0 0 8px rgba(255,208,70,.45));
+
+      }
+
+      50% {
+
+        filter:
+          drop-shadow(0 0 22px rgba(255,226,120,.95));
+
+      }
+
+    }
+
+
+    /* ⭐ 황금 그라데이션 글씨 (지원하는 브라우저에서만) */
+
+    @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+
+      #statusCard #result .fenomeno-status {
+
+        background:
+          linear-gradient(
+            180deg,
+            #fff6cf 0%,
+            #ffd76a 35%,
+            #c9a227 70%,
+            #8a6a12 100%
+          );
+
+        -webkit-background-clip: text;
+
+        background-clip: text;
+
+        -webkit-text-fill-color: transparent;
+
+        text-shadow: none;
+
+      }
+
+    }
+
+
+    @media (max-width: 420px) {
+
+      #statusCard #result .fenomeno-status {
+
+        font-size: 21px;
+
+        letter-spacing: 1.4px;
+
+      }
+
+    }
+
+
+    /* ----------------------------------------------------------------------
+       ② STEP 2 상단 "Notion 거래처 정보를 가져오는 중..." 상태바
+       ---------------------------------------------------------------------- */
+
+    .step2-status-bar {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      margin: 0 0 14px;
+
+      padding: 12px 14px;
+
+      border-radius: 12px;
+
+      border: 1px solid rgba(201,162,39,.35);
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(5,7,11,.96) 0%,
+          rgba(28,23,12,.94) 100%
+        );
+
+      color: #f3f4f6;
+
+      font-size: 15px;
+
+      font-weight: 800;
+
+      line-height: 1.4;
+
+      text-shadow: none;
+
+      box-shadow:
+        0 4px 14px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,245,190,.12);
+
+    }
+
+
+    .step2-status-bar .step2-status-text {
+
+      flex: 1 1 auto;
+
+      min-width: 0;
+
+      text-align: left;
+
+    }
+
+
+    /* ⭐ 회전형 버퍼링 아이콘 (황금색) */
+
+    .step2-status-bar .step2-status-spinner {
+
+      flex: 0 0 auto;
+
+      width: 20px;
+
+      height: 20px;
+
+      border: 3px solid rgba(255,215,0,.20);
+
+      border-top-color: #FFD700;
+
+      border-radius: 50%;
+
+      animation:
+        notionLoadingSpin 0.8s linear infinite;
+
+    }
+
+
+    /* ⭐ 준비 완료 상태 */
+
+    .step2-status-bar.ready {
+
+      border-color: rgba(21,128,61,.45);
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(5,11,7,.96) 0%,
+          rgba(12,28,18,.94) 100%
+        );
+
+      color: #ffffff;
+
+    }
+
+
+    .step2-status-bar.ready .step2-status-spinner {
+
+      border: 0;
+
+      width: auto;
+
+      height: auto;
+
+      animation: none;
+
+      font-size: 17px;
+
+      line-height: 1;
+
+    }
+
+
+    .step2-status-bar.ready .step2-status-spinner::before {
+
+      content: "✅";
+
+    }
+
+
+    /* ⭐ 실패 상태 */
+
+    .step2-status-bar.error {
+
+      border-color: rgba(220,38,38,.50);
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(11,5,5,.96) 0%,
+          rgba(40,10,10,.94) 100%
+        );
+
+    }
+
+
+    .step2-status-bar.error .step2-status-spinner {
+
+      border: 0;
+
+      width: auto;
+
+      height: auto;
+
+      animation: none;
+
+      font-size: 17px;
+
+      line-height: 1;
+
+    }
+
+
+    .step2-status-bar.error .step2-status-spinner::before {
+
+      content: "⚠️";
+
+    }
+
+
+    /* ----------------------------------------------------------------------
+       ③ 속성 선택기 : 리스트에서 값 누르면 "바로" 선택되는 방식
+       ---------------------------------------------------------------------- */
+
+    .option-picker-trigger {
+
+      width: 100% !important;
+
+      margin-top: 0 !important;
+
+      text-align: left !important;
+
+      background: #fff !important;
+
+      color: #111827 !important;
+
+      text-shadow: none !important;
+
+      box-shadow: none !important;
+
+      border: 1px solid #d7dce2 !important;
+
+      border-radius: 12px !important;
+
+      padding: 14px !important;
+
+      font-size: 16px !important;
+
+      font-weight: 800 !important;
+
+      letter-spacing: 0 !important;
+
+      line-height: 1.3 !important;
+
+      white-space: normal !important;
+
+    }
+
+
+    .option-picker-list {
+
+      margin-top: 8px;
+
+      border: 1px solid #e1e5ea;
+
+      border-radius: 12px;
+
+      overflow: hidden;
+
+      background: #fff;
+
+      max-height: 240px;
+
+      overflow-y: auto;
+
+    }
+
+
+    .option-picker-item {
+
+      width: 100% !important;
+
+      margin: 0 !important;
+
+      padding: 13px 14px !important;
+
+      border: 0 !important;
+
+      border-bottom: 1px solid #edf0f3 !important;
+
+      border-radius: 0 !important;
+
+      background: #fff !important;
+
+      color: #111827 !important;
+
+      text-align: left !important;
+
+      text-shadow: none !important;
+
+      box-shadow: none !important;
+
+      font-size: 16px !important;
+
+      font-weight: 800 !important;
+
+      letter-spacing: 0 !important;
+
+    }
+
+
+    .option-picker-item:last-child {
+
+      border-bottom: 0 !important;
+
+    }
+
+
+    .option-picker-item.active {
+
+      background: #ecfdf3 !important;
+
+      color: #15803d !important;
+
+    }
+
+
+    .option-picker-item:active {
+
+      background: #f1f5f9 !important;
+
+    }
+
+
+    /* ----------------------------------------------------------------------
+       ④ 납품요청일 : 진짜 캘린더(date)는 화면에서만 안 보이게 숨깁니다.
+          (display:none 이 아니라 투명 처리 → 캘린더가 정상적으로 열립니다)
+       ---------------------------------------------------------------------- */
+
+    .date-input-hidden {
+
+      width: 100%;
+
+      height: 1px;
+
+      min-height: 0;
+
+      max-height: 1px;
+
+      padding: 0;
+
+      margin: 0;
+
+      border: 0;
+
+      opacity: 0;
+
+      pointer-events: none;
+
+    }
+
+
+    /* ----------------------------------------------------------------------
+       ⑤ 선택된 거래처 줄 오른쪽 X 버튼
+       ---------------------------------------------------------------------- */
+
+    .selected-client {
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 8px;
+
+    }
+
+
+    .selected-client-text {
+
+      flex: 1 1 auto;
+
+      min-width: 0;
+
+    }
+
+
+    .selected-client-clear {
+
+      flex: 0 0 auto;
+
+      width: 30px !important;
+
+      min-width: 30px !important;
+
+      max-width: 30px !important;
+
+      height: 30px !important;
+
+      min-height: 30px !important;
+
+      margin: 0 !important;
+
+      padding: 0 !important;
+
+      border-radius: 50% !important;
+
+      border: 0 !important;
+
+      background: #dc2626 !important;
+
+      color: #ffffff !important;
+
+      font-size: 16px !important;
+
+      font-weight: 900 !important;
+
+      line-height: 1 !important;
+
+      letter-spacing: 0 !important;
+
+      text-shadow: none !important;
+
+      box-shadow: 0 2px 6px rgba(0,0,0,.20) !important;
+
+    }
+
+
+    .selected-client-clear:active {
+
+      transform: scale(.94);
+
+    }
+
+
   </style>
 
 </head>
@@ -2676,7 +3003,8 @@ button:disabled {
     
 
       <div id="result">
-        <span class="fenomeno-status-text">FENOMENO RONALDO 9</span>
+        <span id="statusBrandText" class="fenomeno-status">FENOMENO RONALDO 9</span>
+          
       </div>
 
     </div>
@@ -3646,32 +3974,60 @@ function findClientLocalFromVoice(text) {
   if (exact.length === 1) return exact[0];
   if (exact.length > 1) return null;
 
-  // ⭐ 짧게 말한 거래처 이름도 바로 찾습니다.
-  // 예: "미노" → "미노유통"
-  const voiceKeyword = normalized
-    .replace(/(박스|개|통|팩|수량|주세요|부탁해요|부탁합니다)/g, "")
-    .replace(/\d+/g, "")
-    .trim();
+  /*
+   * ⭐⭐⭐ 2026-09 추가 : 앞글자 2개 이상이 같으면 그 거래처를 찾습니다.
+   *
+   * 예) 거래처명이 "미노유통" 인데 "미노" 라고 말해도 선택
+   * 예) 거래처명이 "미노유통" 인데 "미노식품" 이라고 말해도 선택
+   * 예) 거래처명이 "별미 FND" 인데 "별미" 라고 말해도 선택
+   */
+  const prefixMatches = [];
 
-  if (voiceKeyword.length >= 2) {
-    const prefixMatches = clientList.filter(function(client) {
-      const name = String(client.name || "")
-        .toLowerCase()
-        .replace(/\s+/g, "");
-      return name && name.startsWith(voiceKeyword);
+  clientList.forEach(function(client) {
+
+    const name = String(client.name || "")
+      .toLowerCase()
+      .replace(/\s+/g, "");
+
+    if (name.length < 2 || !normalized) return;
+
+    const maxLength =
+      Math.min(name.length, 6);
+
+    for (let length = maxLength; length >= 2; length--) {
+
+      const prefix = name.substring(0, length);
+
+      if (normalized.includes(prefix)) {
+
+        prefixMatches.push({
+          client: client,
+          matched: length
+        });
+
+        break;
+
+      }
+
+    }
+
+  });
+
+  if (prefixMatches.length > 0) {
+
+    prefixMatches.sort(function(a, b) {
+
+      if (b.matched !== a.matched) return b.matched - a.matched;
+
+      return String(a.client.name || "").length -
+        String(b.client.name || "").length;
+
     });
 
-    if (prefixMatches.length === 1) return prefixMatches[0];
+    return prefixMatches[0].client;
 
-    if (prefixMatches.length > 1) {
-      prefixMatches.sort(function(a,b) {
-        return String(a.name || "").length - String(b.name || "").length;
-      });
-      if (String(prefixMatches[0].name || "").length < String(prefixMatches[1].name || "").length) {
-        return prefixMatches[0];
-      }
-    }
   }
+
 
   // ⭐ 짧은 음성에서도 작은 오인식을 견디기 위한 간단한 편집거리 검색
   function distance(a,b) {
@@ -4133,7 +4489,12 @@ function applyClientList(clients) {
 async function loadClientDataForStep2() {
 
   initialDataLoading = true;
-  updateStep2NotionStatus(false);
+
+  // ⭐ STEP 2 상태바 : 거래처 정보를 가져오는 중
+  setStep2StatusBar(
+    "loading",
+    "Notion 거래처 정보를 가져오는 중..."
+  );
 
   // ⭐ STEP 2에 들어왔을 때만 기존 거래처 캐시를 먼저 적용합니다.
   const cached = readClientCache();
@@ -4163,7 +4524,6 @@ async function loadClientDataForStep2() {
 
     initialDataReady = clientList.length > 0;
     initialDataLoading = false;
-    updateStep2NotionStatus(initialDataReady);
 
     console.log("✅ STEP 2 거래처 데이터 준비 완료");
     console.log("거래처 수:", clientList.length);
@@ -4194,16 +4554,41 @@ async function loadClientDataForStep2() {
       }, 80);
     }
 
+
+    // ⭐ 거래처 준비가 끝났으니 상태바를 "입력 가능" 으로 바꿉니다.
+    setStep2StatusBar(
+      "ready",
+      "김경우님 정보 입력 가능!"
+    );
+
+
     return data;
 
   } catch (error) {
 
     initialDataLoading = false;
-    updateStep2NotionStatus(clientList.length > 0);
 
     initialDataReady = clientList.length > 0;
 
     console.error("STEP 2 거래처 데이터 오류:", error);
+
+
+    // ⭐ 상태바도 함께 바꿉니다. (캐시가 살아 있어 사용 가능하면 준비 완료)
+    if (initialDataReady) {
+
+      setStep2StatusBar(
+        "ready",
+        "김경우님 정보 입력 가능!"
+      );
+
+    } else {
+
+      setStep2StatusBar(
+        "error",
+        "거래처 정보를 가져오지 못했습니다. 잠시 후 다시 시도해주세요."
+      );
+
+    }
 
     if (!initialDataReady) {
       const target =
@@ -4830,6 +5215,38 @@ if (
   );
 
 
+  // ⭐ 2026-09 추가 : 리스트에서 바로 고르는 선택기용 값 목록
+  const productOptionItems =
+    productList.map(function(product) {
+      return { value: product.id, label: product.name };
+    });
+
+
+  const modeOptionItems = [
+    { value: "출고", label: "출고" },
+    { value: "입고", label: "입고" }
+  ];
+
+
+  const deliveryTypeOptionItems =
+    (
+      Array.isArray(deliveryTypeList) &&
+      deliveryTypeList.length > 0
+        ? deliveryTypeList
+        : ["직송"]
+    ).map(function(option) {
+      return { value: option, label: option };
+    });
+
+
+  const secondDeliveryOptionItems =
+    [{ value: "", label: "선택 안 함" }].concat(
+      secondDeliveryLocationList.map(function(option) {
+        return { value: option, label: option };
+      })
+    );
+
+
   const inputLabel =
     currentInputMode === "direct"
       ? "✏️ 직접 입력 확인"
@@ -4896,9 +5313,17 @@ if (
       '</div>' +
 
 
-    '<div id="step2NotionStatus" class="step2-notion-status">' +
-      '<span class="step2-notion-spinner"></span>' +
-      '<span id="step2NotionStatusText">Notion 거래처 정보를 가져오는중</span>' +
+    '<div ' +
+      'id="step2StatusBar" ' +
+      'class="step2-status-bar' +
+        (initialDataReady ? ' ready' : '') +
+      '">' +
+      '<div class="step2-status-spinner"></div>' +
+      '<div class="step2-status-text">' +
+        (initialDataReady
+          ? '김경우님 정보 입력 가능!'
+          : 'Notion 거래처 정보를 가져오는 중...') +
+      '</div>' +
     '</div>' +
 
 
@@ -5037,10 +5462,17 @@ if (
 
         (
           client
-            ? '<span class="selected-client-text">✅ 선택된 거래처: ' +
-              escapeHtml(client.name) +
+            ? '<span id="selectedClientText" ' +
+              'class="selected-client-text">' +
+              "✅ 선택된 거래처: " +
+              escapeHtml(
+                client.name
+              ) +
               '</span>' +
-              '<button type="button" id="selectedClientClearButton" class="selected-client-clear" title="거래처 선택 삭제" onclick="clearSelectedClient()">×</button>'
+              '<button type="button" ' +
+              'id="selectedClientClearButton" ' +
+              'class="selected-client-clear" ' +
+              'title="선택된 거래처 지우기">✕</button>'
             : ""
         ) +
 
@@ -5066,16 +5498,12 @@ if (
         '🏭 제품' +
       '</label>' +
 
-      '<select ' +
-        'id="productSelect" ' +
-        'class="edit-select quick-select-hidden"' +
-      '>' +
-
-        productOptions +
-
-      '</select>' +
-
-      '<div id="productQuickButtons" class="quick-option-buttons"></div>' +
+      buildOptionPickerHtml(
+        "productSelect",
+        productOptionItems,
+        data.productPageId || "",
+        "제품을 선택하세요 ▼"
+      ) +
 
       '<div class="help-text">' +
         '표시 순서: 푸로찜 15 KG → 20 KG → 12 KG' +
@@ -5141,39 +5569,12 @@ if (
         '📤 입출고' +
       '</label>' +
 
-      '<select ' +
-        'id="modeSelect" ' +
-        'class="edit-select quick-select-hidden"' +
-      '>' +
-
-        '<option value="출고"' +
-          (
-            data.mode === "출고" ||
-            !data.mode
-              ? " selected"
-              : ""
-          ) +
-        '>' +
-
-          '출고' +
-
-        '</option>' +
-
-        '<option value="입고"' +
-          (
-            data.mode === "입고"
-              ? " selected"
-              : ""
-          ) +
-        '>' +
-
-          '입고' +
-
-        '</option>' +
-
-      '</select>' +
-
-      '<div id="modeQuickButtons" class="quick-option-buttons"></div>' +
+      buildOptionPickerHtml(
+        "modeSelect",
+        modeOptionItems,
+        data.mode === "입고" ? "입고" : "출고",
+        "출고 ▼"
+      ) +
 
     '</div>' +
 
@@ -5184,9 +5585,22 @@ if (
         '📅 납품요청일' +
       '</label>' +
 
+      '<button ' +
+        'type="button" ' +
+        'id="deliveryDateTrigger" ' +
+        'class="edit-input option-picker-trigger">' +
+
+        '📅 ' +
+        escapeHtml(
+          data.deliveryDate ||
+          getTodayLocal()
+        ) +
+
+      '</button>' +
+
       '<input ' +
         'id="deliveryDateInput" ' +
-        'class="edit-input quick-date-input-hidden" ' +
+        'class="date-input-hidden" ' +
         'type="date" ' +
         'value="' +
           escapeAttribute(
@@ -5196,7 +5610,14 @@ if (
         '"' +
       '>' +
 
-      '<div id="dateQuickButtons" class="quick-option-buttons quick-date-buttons"></div>' +
+      '<div ' +
+        'id="deliveryDatePicker" ' +
+        'class="option-picker-list step-hidden"' +
+      '></div>' +
+
+      '<div class="help-text">' +
+        '날짜를 누르면 캘린더가 열리고, 고른 날짜가 바로 적용됩니다.' +
+      '</div>' +
 
     '</div>' +
 
@@ -5207,16 +5628,12 @@ if (
         '🚚 납품형태' +
       '</label>' +
 
-      '<select ' +
-        'id="deliveryTypeSelect" ' +
-        'class="edit-select quick-select-hidden"' +
-      '>' +
-
-        deliveryTypeOptions +
-
-      '</select>' +
-
-      '<div id="deliveryTypeQuickButtons" class="quick-option-buttons"></div>' +
+      buildOptionPickerHtml(
+        "deliveryTypeSelect",
+        deliveryTypeOptionItems,
+        normalizedDeliveryType,
+        "납품형태를 선택하세요 ▼"
+      ) +
 
       '<div class="help-text">' +
         '기본값은 "직송"입니다.' +
@@ -5231,16 +5648,12 @@ if (
         '📍 제2배송지' +
       '</label>' +
 
-      '<select ' +
-        'id="secondDeliverySelect" ' +
-        'class="edit-select quick-select-hidden"' +
-      '>' +
-
-        secondDeliveryOptions +
-
-      '</select>' +
-
-      '<div id="secondDeliveryQuickButtons" class="quick-option-buttons"></div>' +
+      buildOptionPickerHtml(
+        "secondDeliverySelect",
+        secondDeliveryOptionItems,
+        data.secondDeliveryLocation || "",
+        "선택 안 함 ▼"
+      ) +
 
       '<div class="help-text">' +
         '필요할 때만 선택하세요.' +
@@ -5329,8 +5742,11 @@ if (
   previewResult.appendChild(clientPicker);
 
 
+  // ⭐ 2026-09 추가 : 선택기 / 날짜 / 수량 / X 버튼 연결
+  setupStep2Pickers();
+
+
   showResultScreen();
-  updateStep2NotionStatus(initialDataReady);
 
 
   const productSelect =
@@ -5396,14 +5812,6 @@ if (
   );
 
   setupClientVoiceButton();
-  setupStep2QuickOptionButtons();
-
-  const selectedClientClearButton = document.getElementById("selectedClientClearButton");
-  if (selectedClientClearButton) {
-    selectedClientClearButton.addEventListener("click", function() {
-      clearSelectedClient();
-    });
-  }
 
   // ⭐ 거래처 전체 선택 화면 열기 / 뒤로가기
   const clientPickerButton =
@@ -5461,11 +5869,7 @@ if (
           const searchInput = document.getElementById("clientSearchInput");
           if (searchInput) searchInput.value = selectedClient.name;
 
-          const selectedBox = document.getElementById("selectedClient");
-          if (selectedBox) {
-            selectedBox.style.display = "block";
-            selectedBox.innerHTML = '<span class="selected-client-text">✅ 선택된 거래처: ' + escapeHtml(selectedClient.name) + '</span>' + '<button type="button" id="selectedClientClearButton" class="selected-client-clear" title="거래처 선택 삭제" onclick="clearSelectedClient()">×</button>';
-          }
+          setSelectedClientDisplay(selectedClient);
 
           clientPickerButton.textContent = "🏢 " + selectedClient.name;
           if (currentPreviewData) {
@@ -5570,9 +5974,6 @@ step2ImmediateUpdateIds.forEach(function(id) {
 
       // ⭐ 기존 화면 요약도 즉시 갱신
       renderTransactionSummary();
-
-      // ⭐ 날짜를 직접 선택한 경우에도 버튼 표시를 즉시 갱신
-      setupStep2QuickOptionButtons();
 
     }
   );
@@ -5688,144 +6089,6 @@ step2ImmediateUpdateIds.forEach(function(id) {
 
 }
 
-
-// ============================================================================
-// ⭐ 16-0-1. STEP 2 빠른 선택 버튼
-//
-// 버튼을 누르는 즉시 숨겨진 기존 Select/Input 값에 반영합니다.
-// 기존 등록 로직은 그대로 이 값을 사용합니다.
-// ============================================================================
-
-function buildQuickOptionButtons(containerId, options, selectedValue, onSelect) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-
-  container.innerHTML = (options || []).map(function(option) {
-    const value = String(option.value == null ? option : option.value);
-    const label = String(option.label == null ? option : option.label);
-    const selected = String(value) === String(selectedValue || "") ? " selected" : "";
-    return '<button type="button" class="quick-option-button' + selected + '" data-value="' + escapeAttribute(value) + '">' + escapeHtml(label) + '</button>';
-  }).join("");
-
-  container.querySelectorAll(".quick-option-button").forEach(function(button) {
-    button.addEventListener("click", function() {
-      onSelect(button.getAttribute("data-value"));
-    });
-  });
-}
-
-function setupStep2QuickOptionButtons() {
-  const productSelect = document.getElementById("productSelect");
-  const modeSelect = document.getElementById("modeSelect");
-  const deliveryDateInput = document.getElementById("deliveryDateInput");
-  const deliveryTypeSelect = document.getElementById("deliveryTypeSelect");
-  const secondDeliverySelect = document.getElementById("secondDeliverySelect");
-
-  if (productSelect) {
-    buildQuickOptionButtons("productQuickButtons", productList.map(function(product) {
-      return {value: product.id, label: product.name};
-    }), productSelect.value, function(value) {
-      productSelect.value = value;
-      productSelect.dispatchEvent(new Event("change", {bubbles:true}));
-      setupStep2QuickOptionButtons();
-    });
-  }
-
-  if (modeSelect) {
-    buildQuickOptionButtons("modeQuickButtons", [
-      {value:"출고", label:"📤 출고"},
-      {value:"입고", label:"📥 입고"}
-    ], modeSelect.value, function(value) {
-      modeSelect.value = value;
-      modeSelect.dispatchEvent(new Event("change", {bubbles:true}));
-      setupStep2QuickOptionButtons();
-    });
-  }
-
-  if (deliveryDateInput) {
-    const base = new Date();
-    const dates = [0,1,2,3,4,5,6].map(function(offset) {
-      const d = new Date(base);
-      d.setDate(d.getDate() + offset);
-      const value = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
-      const label = offset === 0 ? "오늘" : offset === 1 ? "내일" : offset === 2 ? "모레" : (offset + "일 후");
-      return {value:value, label:label};
-    });
-    dates.push({value:"__calendar__", label:"📅 날짜 선택"});
-    buildQuickOptionButtons("dateQuickButtons", dates, deliveryDateInput.value, function(value) {
-      if (value === "__calendar__") {
-        try {
-          deliveryDateInput.showPicker();
-        } catch (e) {
-          deliveryDateInput.focus();
-        }
-        return;
-      }
-      deliveryDateInput.value = value;
-      deliveryDateInput.dispatchEvent(new Event("change", {bubbles:true}));
-      setupStep2QuickOptionButtons();
-    });
-  }
-
-  if (deliveryTypeSelect) {
-    const options = Array.from(deliveryTypeSelect.options).map(function(option) {
-      return {value:option.value, label:option.textContent};
-    }).filter(function(option) { return option.value; });
-    buildQuickOptionButtons("deliveryTypeQuickButtons", options, deliveryTypeSelect.value, function(value) {
-      deliveryTypeSelect.value = value;
-      deliveryTypeSelect.dispatchEvent(new Event("change", {bubbles:true}));
-      setupStep2QuickOptionButtons();
-    });
-  }
-
-  if (secondDeliverySelect) {
-    const options = Array.from(secondDeliverySelect.options).map(function(option) {
-      return {value:option.value, label:option.textContent};
-    });
-    buildQuickOptionButtons("secondDeliveryQuickButtons", options, secondDeliverySelect.value, function(value) {
-      secondDeliverySelect.value = value;
-      secondDeliverySelect.dispatchEvent(new Event("change", {bubbles:true}));
-      setupStep2QuickOptionButtons();
-    });
-  }
-}
-
-function updateStep2NotionStatus(ready) {
-  const bar = document.getElementById("step2NotionStatus");
-  const text = document.getElementById("step2NotionStatusText");
-  if (!bar || !text) return;
-
-  if (ready) {
-    bar.classList.add("ready");
-    text.textContent = "정보 입력 가능!";
-    bar.insertAdjacentHTML("afterbegin", '<span class="step2-notion-check">✓</span>');
-  } else {
-    bar.classList.remove("ready");
-    text.textContent = "Notion 거래처 정보를 가져오는중";
-    const check = bar.querySelector(".step2-notion-check");
-    if (check) check.remove();
-  }
-}
-
-function clearSelectedClient() {
-  const clientSelect = document.getElementById("clientSelect");
-  const selectedBox = document.getElementById("selectedClient");
-  const searchInput = document.getElementById("clientSearchInput");
-  const pickerButton = document.getElementById("clientPickerButton");
-
-  if (clientSelect) clientSelect.value = "";
-  if (searchInput) searchInput.value = "";
-  if (selectedBox) {
-    selectedBox.style.display = "none";
-    selectedBox.innerHTML = "";
-  }
-  if (pickerButton) pickerButton.textContent = "거래처 선택 ▼";
-  if (currentPreviewData) {
-    currentPreviewData.clientPageId = "";
-    currentPreviewData.clientName = "";
-  }
-  renderTransactionSummary();
-}
 
 // ============================================================================
 // 💰 16-0. 주소 / 단가 / 무게 표시
@@ -5945,11 +6208,10 @@ function setupClientVoiceButton() {
       : Number(quantityInput && quantityInput.value ? quantityInput.value : 1);
     const clientSelect=document.getElementById("clientSelect");
     const searchInput=document.getElementById("clientSearchInput");
-    const selectedBox=document.getElementById("selectedClient");
     const pickerButton=document.getElementById("clientPickerButton");
     if(clientSelect) clientSelect.value=client.id;
     if(searchInput) searchInput.value=client.name;
-    if(selectedBox){selectedBox.style.display="block";selectedBox.innerHTML='<span class="selected-client-text">✅ 선택된 거래처: '+escapeHtml(client.name)+'</span>' + '<button type="button" id="selectedClientClearButton" class="selected-client-clear" title="거래처 선택 삭제" onclick="clearSelectedClient()">×</button>';}
+    setSelectedClientDisplay(client);
     if(pickerButton) pickerButton.textContent="🏢 "+client.name;
     if(quantityInput) quantityInput.value=finalQuantity;
     if(currentPreviewData){currentPreviewData.clientPageId=client.id;currentPreviewData.clientName=client.name;currentPreviewData.quantity=finalQuantity;}
@@ -6092,15 +6354,7 @@ function setupClientSearch(
       client.name;
 
 
-    selectedBox.style.display =
-      "block";
-
-
-    selectedBox.innerHTML =
-      "✅ 선택된 거래처: " +
-      escapeHtml(
-        client.name
-      );
+    setSelectedClientDisplay(client);
 
     const pickerButton =
       document.getElementById("clientPickerButton");
@@ -6302,8 +6556,7 @@ function setupClientSearch(
         "";
 
 
-      selectedBox.style.display =
-        "none";
+      setSelectedClientDisplay(null);
 
 
       renderCandidates();
@@ -6336,8 +6589,7 @@ function setupClientSearch(
 
       if (!selectedId) {
 
-        selectedBox.style.display =
-          "none";
+        setSelectedClientDisplay(null);
 
         return;
 
@@ -7104,8 +7356,7 @@ function resetForNewRecording() {
     "";
 
 
-  inputResult.innerHTML =
-    '<span class="fenomeno-status-text">FENOMENO RONALDO 9</span>';
+  renderStatusBrand();
 
 
   showInputScreen();
@@ -7191,6 +7442,527 @@ function escapeAttribute(
 // 🚀 20-1. 앱 시작 준비
 // ⭐ 앱이 열리자마자 거래처 / 제품 / 선택 목록을 먼저 준비합니다.
 // ============================================================================
+
+// ============================================================================
+// ⭐⭐⭐ 16-0. 2026-09 새로 추가된 도우미 함수 모음
+//
+// ⭐ 기존 함수는 하나도 지우지 않고, 필요한 도우미만 새로 추가했습니다.
+// ============================================================================
+
+
+// ⭐ ① 선택된 거래처 줄 표시 / 숨김 (오른쪽 X 버튼 포함)
+function setSelectedClientDisplay(client) {
+
+  const selectedBox =
+    document.getElementById("selectedClient");
+
+  if (!selectedBox) return;
+
+
+  const textBox =
+    document.getElementById("selectedClientText");
+
+
+  if (!client) {
+
+    selectedBox.style.display = "none";
+
+    if (textBox) textBox.innerHTML = "";
+
+    return;
+
+  }
+
+
+  selectedBox.style.display = "flex";
+
+
+  if (textBox) {
+
+    textBox.innerHTML =
+      "✅ 선택된 거래처: " +
+      escapeHtml(client.name);
+
+    return;
+
+  }
+
+
+  selectedBox.innerHTML =
+    '<span id="selectedClientText" class="selected-client-text">' +
+    "✅ 선택된 거래처: " +
+    escapeHtml(client.name) +
+    '</span>' +
+    '<button type="button" id="selectedClientClearButton" ' +
+    'class="selected-client-clear" title="선택된 거래처 지우기">✕</button>';
+
+}
+
+
+// ⭐ ② 선택된 거래처 지우기 (X 버튼을 눌렀을 때)
+function clearSelectedClient() {
+
+  const clientSelect =
+    document.getElementById("clientSelect");
+
+  const searchInput =
+    document.getElementById("clientSearchInput");
+
+  const pickerButton =
+    document.getElementById("clientPickerButton");
+
+
+  if (clientSelect) clientSelect.value = "";
+
+  if (searchInput) searchInput.value = "";
+
+  if (pickerButton) pickerButton.textContent = "거래처 선택 ▼";
+
+
+  setSelectedClientDisplay(null);
+
+
+  if (currentPreviewData) {
+
+    currentPreviewData.clientPageId = "";
+
+    currentPreviewData.clientName = "";
+
+  }
+
+
+  renderTransactionSummary();
+
+
+  // ⭐ 바로 다시 검색하거나 마이크로 말할 수 있게 검색창을 열어줍니다.
+  const searchPanel =
+    document.getElementById("clientSearchPanel");
+
+  if (searchPanel) searchPanel.classList.remove("step-hidden");
+
+
+  const searchInputAgain =
+    document.getElementById("clientSearchInput");
+
+  if (searchInputAgain) searchInputAgain.focus();
+
+}
+
+
+// ⭐ ③ STEP 2 상단 준비 상태바 (가져오는 중 / 입력 가능 / 실패)
+function setStep2StatusBar(state, message) {
+
+  const bar =
+    document.getElementById("step2StatusBar");
+
+  if (!bar) return;
+
+
+  const text =
+    bar.querySelector(".step2-status-text");
+
+  if (text && typeof message === "string") {
+
+    text.textContent = message;
+
+  }
+
+
+  bar.classList.toggle("ready", state === "ready");
+
+  bar.classList.toggle("error", state === "error");
+
+}
+
+
+// ⭐ ④ 리스트에서 값 누르면 즉시 선택되는 속성 선택기 만들기
+//     (제품 / 입출고 / 납품형태 / 제2배송지 공용)
+function buildOptionPickerHtml(selectId, options, selectedValue, triggerLabel) {
+
+  const list =
+    Array.isArray(options) ? options : [];
+
+
+  const target =
+    selectedValue == null ? "" : String(selectedValue);
+
+
+  const selected =
+    list.find(function(option) {
+
+      return String(option.value) === target;
+
+    });
+
+
+  const label =
+    selected && String(selected.value) !== ""
+      ? String(selected.label)
+      : (triggerLabel || "선택하세요 ▼");
+
+
+  let listHtml = "";
+
+
+  list.forEach(function(option) {
+
+    const isActive =
+      String(option.value) === target;
+
+
+    listHtml +=
+
+      '<button ' +
+        'type="button" ' +
+        'class="option-picker-item' +
+        (isActive ? " active" : "") +
+        '" ' +
+        'data-option-value="' +
+        escapeAttribute(option.value) +
+        '">' +
+
+        escapeHtml(option.label) +
+
+      '</button>';
+
+  });
+
+
+  return (
+
+    '<button ' +
+      'type="button" ' +
+      'id="' + escapeAttribute(selectId) + 'Trigger" ' +
+      'class="edit-input option-picker-trigger" ' +
+      'data-option-target="' + escapeAttribute(selectId) + '">' +
+
+      escapeHtml(label) +
+
+    '</button>' +
+
+    '<select ' +
+      'id="' + escapeAttribute(selectId) + '" ' +
+      'class="edit-select step-hidden"' +
+    '>' +
+
+      list.map(function(option) {
+
+        return (
+
+          '<option value="' +
+            escapeAttribute(option.value) +
+          '"' +
+
+          (String(option.value) === target ? " selected" : "") +
+
+          '>' +
+
+          escapeHtml(option.label) +
+
+          '</option>'
+
+        );
+
+      }).join("") +
+
+    '</select>' +
+
+    '<div ' +
+      'id="' + escapeAttribute(selectId) + 'PickerList" ' +
+      'class="option-picker-list step-hidden"' +
+    '>' +
+
+      listHtml +
+
+    '</div>'
+
+  );
+
+}
+
+
+// ⭐ ⑤ 선택기를 눌러서 값을 고르면 "바로" 저장되는 연결
+function bindOptionPicker(selectId) {
+
+  const select =
+    document.getElementById(selectId);
+
+  const trigger =
+    document.getElementById(selectId + "Trigger");
+
+  const list =
+    document.getElementById(selectId + "PickerList");
+
+
+  if (!select || !trigger || !list) return;
+
+
+  trigger.addEventListener("click", function() {
+
+    const wasHidden =
+      list.classList.contains("step-hidden");
+
+
+    // ⭐ 다른 선택기는 자동으로 닫아줍니다.
+    document
+      .querySelectorAll(".option-picker-list")
+      .forEach(function(other) {
+
+        if (other !== list) other.classList.add("step-hidden");
+
+      });
+
+
+    list.classList.toggle("step-hidden", !wasHidden);
+
+  });
+
+
+  list
+    .querySelectorAll(".option-picker-item")
+    .forEach(function(button) {
+
+      button.addEventListener("click", function() {
+
+        select.value =
+          button.getAttribute("data-option-value");
+
+
+        list
+          .querySelectorAll(".option-picker-item")
+          .forEach(function(other) {
+
+            other.classList.toggle("active", other === button);
+
+          });
+
+
+        trigger.textContent =
+          button.textContent;
+
+
+        list.classList.add("step-hidden");
+
+
+        // ⭐ 값이 바뀐 순간 바로 반영합니다. (완료 버튼 필요 없음)
+        select.dispatchEvent(
+          new Event("change", { bubbles: true })
+        );
+
+      });
+
+    });
+
+}
+
+
+// ⭐ ⑥ 캘린더가 열리지 않는 브라우저용 간단 날짜 목록 (오늘부터 30일)
+function renderDateQuickList(dateInput, dateList, dateTrigger) {
+
+  let html = "";
+
+
+  for (let i = 0; i < 30; i++) {
+
+    const day = new Date();
+
+    day.setDate(day.getDate() + i);
+
+
+    const value =
+      day.getFullYear() + "-" +
+      String(day.getMonth() + 1).padStart(2, "0") + "-" +
+      String(day.getDate()).padStart(2, "0");
+
+
+    const label =
+      i === 0
+        ? "오늘 (" + value + ")"
+        : (i === 1
+            ? "내일 (" + value + ")"
+            : value);
+
+
+    html +=
+
+      '<button ' +
+        'type="button" ' +
+        'class="option-picker-item' +
+        (value === dateInput.value ? " active" : "") +
+        '" ' +
+        'data-date-value="' + value + '">' +
+
+        label +
+
+      '</button>';
+
+  }
+
+
+  dateList.innerHTML = html;
+
+
+  dateList
+    .querySelectorAll(".option-picker-item")
+    .forEach(function(button) {
+
+      button.addEventListener("click", function() {
+
+        dateInput.value =
+          button.getAttribute("data-date-value");
+
+
+        dateTrigger.textContent =
+          "📅 " + dateInput.value;
+
+
+        dateList.classList.add("step-hidden");
+
+
+        dateInput.dispatchEvent(
+          new Event("change", { bubbles: true })
+        );
+
+      });
+
+    });
+
+}
+
+
+// ⭐ ⑦ STEP 2가 그려질 때마다 선택기 / 날짜 / 수량 / X 버튼을 연결
+function setupStep2Pickers() {
+
+  ["productSelect", "modeSelect", "deliveryTypeSelect", "secondDeliverySelect"]
+    .forEach(bindOptionPicker);
+
+
+  // ⭐ 납품요청일 : 캘린더에서 날짜를 고르면 바로 반영됩니다.
+  const dateTrigger =
+    document.getElementById("deliveryDateTrigger");
+
+  const dateInput =
+    document.getElementById("deliveryDateInput");
+
+  const dateList =
+    document.getElementById("deliveryDatePicker");
+
+
+  if (dateTrigger && dateInput && dateList) {
+
+    dateTrigger.textContent =
+      dateInput.value
+        ? "📅 " + dateInput.value
+        : "날짜를 선택하세요 ▼";
+
+
+    dateTrigger.addEventListener("click", function() {
+
+      try {
+
+        if (typeof dateInput.showPicker === "function") {
+
+          dateInput.showPicker();
+
+          return;
+
+        }
+
+      } catch (error) {
+
+        console.log("showPicker 오류:", error);
+
+      }
+
+
+      renderDateQuickList(dateInput, dateList, dateTrigger);
+
+      dateList.classList.toggle("step-hidden");
+
+    });
+
+
+    dateInput.addEventListener("change", function() {
+
+      dateTrigger.textContent =
+        dateInput.value
+          ? "📅 " + dateInput.value
+          : "날짜를 선택하세요 ▼";
+
+
+      dateList.classList.add("step-hidden");
+
+    });
+
+  }
+
+
+  // ⭐ 수량 : 기본값 1이 그대로 남아 있으면 지워서 바로 입력하게 합니다.
+  const quantityInput =
+    document.getElementById("quantityInput");
+
+
+  if (quantityInput) {
+
+    quantityInput.addEventListener("focus", function() {
+
+      if (String(quantityInput.value) === "1") {
+
+        quantityInput.value = "";
+
+      }
+
+    });
+
+
+    quantityInput.addEventListener("blur", function() {
+
+      if (!String(quantityInput.value).trim()) {
+
+        quantityInput.value = "1";
+
+        syncCurrentPreviewDataFromForm();
+
+        renderTransactionSummary();
+
+      }
+
+    });
+
+  }
+
+
+  // ⭐ 선택된 거래처 오른쪽 X 버튼
+  const clearButton =
+    document.getElementById("selectedClientClearButton");
+
+
+  if (clearButton) {
+
+    clearButton.addEventListener("click", clearSelectedClient);
+
+  }
+
+}
+
+
+// ⭐⭐⭐ 2026-09 추가 : 첫 화면 하단 상태 문구
+
+// ⭐ 아래 문구만 바꾸면 화면에도 그대로 바뀝니다.
+const STATUS_BRAND_TEXT = "FENOMENO RONALDO 9";
+
+
+function renderStatusBrand() {
+
+  if (!inputResult) return;
+
+  inputResult.innerHTML =
+    '<span id="statusBrandText" class="fenomeno-status">' +
+    escapeHtml(STATUS_BRAND_TEXT) +
+    '</span>';
+
+}
+
 
 async function initializeApp() {
 
@@ -7290,11 +8062,12 @@ inputResult.innerHTML =
 // ⭐⭐⭐ 첫 화면에서는 거래처 / 제품 / Notion 데이터를 읽지 않습니다.
 // 사용자가 입출고를 선택하고 STEP 2로 들어간 뒤
 // loadClientDataForStep2()가 거래처만 준비합니다.
-inputResult.innerHTML = '<span class="fenomeno-status-text">FENOMENO RONALDO 9</span>';
+renderStatusBrand();
 
 
 </script>
 
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
