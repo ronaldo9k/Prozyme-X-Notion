@@ -2310,6 +2310,46 @@ button:disabled {
         padding-left: 8px;
         padding-right: 8px;
       }
+      /* ⭐ 입고 / 출고 버튼 글자 그림자 제거 */
+.transaction-mode-button {
+  text-shadow: none !important;
+}
+      /* ⭐ 현재 음성 시작/완료 및 첫 화면 새로고침 버튼은
+   기능 코드는 유지하고 화면에서만 숨깁니다. */
+#startButton,
+#finishButton,
+#inputRefreshButton {
+  display: none !important;
+}
+/* ⭐ 직접 입력하기를 첫 화면의 메인 버튼처럼 표시 */
+#inputScreen > .card:first-of-type .direct-refresh-row {
+  display: block;
+  width: 100%;
+}
+
+#inputScreen > .card:first-of-type .direct-refresh-row #directButton {
+  display: block;
+  width: 170px;
+  min-width: 170px;
+  max-width: 170px;
+  margin: 0 auto;
+}
+/* ⭐ 거래처 검색 / 거래처 선택 버튼 높이 통일 */
+.client-search-toggle,
+.client-picker-button {
+  height: 50px;
+  min-height: 50px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+      /* ⭐ Step 2 "← 입력 화면" 글자 그림자 제거 */
+.preview-back {
+  text-shadow: none !important;
+}
+
+      
     }
 
   </style>
