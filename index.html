@@ -2483,6 +2483,10 @@ button:disabled {
 
       margin: 0 0 14px;
 
+      /* ⭐⭐⭐ 신규 추가 : 오른쪽 "등록 가능 표시바"와 균등 폭(50%:50%) 배분을 위한 여백 */
+
+      margin-right: 9px;
+
       padding: 12px 14px;
 
       border-radius: 12px;
@@ -2624,6 +2628,131 @@ button:disabled {
     .step2-status-bar.error .step2-status-spinner::before {
 
       content: "⚠️";
+
+    }
+
+
+    /* ========================================================================
+       ⭐⭐⭐ 신규 추가 : STEP 2 상단 오른쪽 "등록 가능 표시바"
+       ======================================================================== */
+
+    .step2-ready-bar {
+
+      flex: 1 1 0;
+
+      min-width: 0;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+      margin: 0 0 14px;
+
+      padding: 12px 14px;
+
+      border-radius: 12px;
+
+      border: 1px solid rgba(148,163,184,.38);
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(15,23,42,.95) 0%,
+          rgba(30,41,59,.93) 100%
+        );
+
+      color: #e2e8f0;
+
+      font-size: 15px;
+
+      font-weight: 800;
+
+      line-height: 1.4;
+
+      text-shadow: none;
+
+      box-shadow:
+        0 4px 14px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.07);
+
+    }
+
+
+    .step2-ready-bar .step2-ready-text {
+
+      flex: 1 1 auto;
+
+      min-width: 0;
+
+      text-align: left;
+
+      white-space: nowrap;
+
+      overflow: hidden;
+
+      text-overflow: ellipsis;
+
+    }
+
+
+    .step2-ready-bar .step2-ready-icon {
+
+      flex: 0 0 auto;
+
+      font-size: 17px;
+
+      line-height: 1;
+
+    }
+
+
+    /* ⭐ 등록 준비 완료 (은은한 금색으로 "준비됨" 강조) */
+
+    .step2-ready-bar.step2-ready-bar-ready {
+
+      border-color: rgba(201,162,39,.55);
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(30,26,12,.95) 0%,
+          rgba(51,42,15,.92) 100%
+        );
+
+      color: #f7efcf;
+
+    }
+
+
+    /* ⭐ 등록 준비 실패 */
+
+    .step2-ready-bar.step2-ready-bar-fail {
+
+      border-color: rgba(220,38,38,.50);
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(11,5,5,.96) 0%,
+          rgba(40,10,10,.94) 100%
+        );
+
+      color: #f3d4d4;
+
+    }
+
+
+    /* ⭐ 좁은 화면(모바일)에서는 두 상태바가 서로 방해하지 않게 세로로 쌓습니다. */
+
+    @media (max-width: 420px) {
+
+      .step2-status-bar {
+
+        margin-right: 0;
+
+      }
 
     }
 
@@ -3035,7 +3164,17 @@ button:disabled {
 // ============================================================================
 
 const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbwkpTXrgO9eRvZGXtwbizlSL-3tXxp2XbudLA3c0ZZdR7SdXg7Kxm9xE6m7Xwz2qDt9/exec";
+  "https://script.google.com/macros/s/AKfycbz_148AxQRLFnr0Jol5U1dvgDjKgnD0pQkpNXn-o5wWbMdiLeOger_w_xLQOz7MlOom/exec";
+
+// ============================================================================
+// ⭐ 1-1. GAS 서버 일시 응답불가 상태 (신규 추가)
+//
+// - GAS는 가끔 깨어나는 데 시간이 걸려서 "Failed to fetch"가 납니다.
+// - 요청이 연속으로 실패하면 60초 동안 요청을 보류했다가 다시 시도합니다.
+// - 요청이 성공하면 바로 정상 상태로 돌아옵니다.
+// ============================================================================
+
+let GAS_DOWN_UNTIL = 0;
 
 
 // ============================================================================
@@ -3822,6 +3961,13 @@ async function startDirectInput(autoStartVoice) {
       readyConfirmButton.textContent =
         "✅ 수정된 내용으로 Notion 등록";
 
+      // ⭐⭐⭐ 신규 추가 : 등록 준비 완료 → 오른쪽 표시바도 "등록 가능"으로
+
+      setStep2ReadyBar(
+        "ready",
+        "✅ 노션 등록 가능"
+      );
+
     }
 
 
@@ -3849,6 +3995,13 @@ async function startDirectInput(autoStartVoice) {
 
       failedConfirmButton.textContent =
         "⚠️ 등록 준비 실패";
+
+      // ⭐⭐⭐ 신규 추가 : 등록 준비 실패 → 오른쪽 표시바도 "등록 불가"로
+
+      setStep2ReadyBar(
+        "fail",
+        "❌ 노션 등록 불가"
+      );
 
     }
 
@@ -4162,6 +4315,10 @@ async function finishQuickVoiceRecording() {
   } catch(error) {
     const button=document.getElementById("confirmButton");
     if(button){button.disabled=true;button.textContent="⚠️ 등록 준비 실패";}
+
+    // ⭐⭐⭐ 신규 추가 : 등록 준비 실패 → 오른쪽 표시바도 "등록 불가"로
+
+    setStep2ReadyBar("fail", "❌ 노션 등록 불가");
     const box=document.createElement("div");
     box.className="error";
     box.style.marginTop="10px";
@@ -4306,53 +4463,121 @@ function finalizeAndSend(text) {
 
 async function postToGAS(payload) {
 
-  const response =
-    await fetch(
-      GAS_URL,
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "text/plain;charset=utf-8"
-        },
-
-        body:
-          JSON.stringify(payload)
-
-      }
-    );
-
-
-  const raw =
-    await response.text();
-
-
-  console.log(
-    "GAS 응답:",
-    raw
-  );
-
-
-  let data;
-
-
-  try {
-
-    data =
-      JSON.parse(raw);
-
-  } catch (jsonError) {
-
+  /*
+   * ⭐⭐⭐ 신규 추가 ① : GAS가 잠시 응답하지 않는 동안(자는 중) 무의미한 재시도를 막습니다.
+   *
+   * - 요청이 연속 3번 "Failed to fetch"로 실패하면 60초 동안 쉬었다가 다시 시도합니다.
+   * - 60초가 지나면 자동으로 다시 정상 시도합니다.
+   * - 요청이 한 번이라도 성공하면 쿨다운은 즉시 풀립니다.
+   */
+  if (
+    GAS_DOWN_UNTIL > 0 &&
+    Date.now() < GAS_DOWN_UNTIL
+  ) {
     throw new Error(
-      "GAS 응답을 읽지 못했습니다.\n\n" +
-      raw
+      "GAS 서버가 잠시 응답하지 않아요. 1분 뒤 자동으로 다시 시도돼요. (잠시 후 다시 눌러주세요.)"
     );
-
   }
 
 
-  return data;
+  /*
+   * ⭐⭐⭐ 신규 추가 ② : 한 번만 보내지 말고, 최대 3번까지 자동으로 다시 보냅니다.
+   *
+   * - GAS는 가끔 첫 연결을 잠깐 못 받아줍니다(서버가 자다가 깨어나는 콜드 스타트).
+   * - 1번 실패했다고 바로 에러를 보여주지 않고, 2초 → 4초 기다렸다가 다시 시도하면
+   *   대부분 성공합니다. (기존 fetch 방식/헤더/응답처리는 그대로 유지합니다.)
+   * - 노션 등록 요청(action === "confirm")을 두 번 눌러도 같은 기록이 두 번 생기지 않게
+   *   GAS 서버 안의 안전장치(멱등성 처리)와 짝을 이룹니다.
+   */
+
+  const maxAttempts = 3;
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+
+    try {
+
+      const response =
+        await fetch(
+          GAS_URL,
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "text/plain;charset=utf-8"
+            },
+
+            body:
+              JSON.stringify(payload)
+
+          }
+        );
+
+
+      const raw =
+        await response.text();
+
+
+      console.log(
+        "GAS 응답:",
+        raw
+      );
+
+
+      let data;
+
+
+      try {
+
+        data =
+          JSON.parse(raw);
+
+      } catch (jsonError) {
+
+        throw new Error(
+          "GAS 응답을 읽지 못했습니다.\n\n" +
+          raw
+        );
+
+      }
+
+
+      GAS_DOWN_UNTIL = 0;
+
+      return data;
+
+    } catch (error) {
+
+      lastError = error;
+
+      console.warn(
+        "GAS 요청 " + attempt + "번째 시도 실패:",
+        error
+      );
+
+      /*
+       * 마지막 시도까지 실패했으면 쿨다운을 켜고 에러를 던집니다.
+       * 아직 시도 횟수가 남아 있으면 잠시 기다렸다가 다시 시도합니다.
+       */
+      if (attempt >= maxAttempts) {
+
+        GAS_DOWN_UNTIL =
+          Date.now() + 60000;
+
+        throw lastError;
+
+      }
+
+      await new Promise(function(resolve) {
+        setTimeout(resolve, attempt * 2000);
+      });
+
+    }
+
+  }
+
+  throw lastError;
 
 }
 
@@ -4745,9 +4970,121 @@ async function refreshInitialDataForPreview() {
   if (confirmButton && !pendingToken) {
     confirmButton.disabled = true;
     confirmButton.textContent = "⏳ 등록 준비 중...";
+
+    // ⭐⭐⭐ 신규 추가 : 등록용 토큰이 없어 등록이 불가능하면 오른쪽 표시바도 함께 실패 표시
+
+    setStep2ReadyBar(
+      "fail",
+      "❌ 노션 등록 불가 (재입력 필요)"
+    );
+
   }
 
 }
+
+// ============================================================================
+// ⭐ 신규 추가 : 노션에서 제품 / 납품형태 / 제2배송지 목록 즉시 갱신
+//
+// 이 목록들은 거의 바뀌지 않아 서버가 저장해 둔 목록을 쓰지만,
+// 노션에서 제2배송지 등이 추가되었을 때 "🗂️ 목록 새로고침" 버튼을 누르면
+// 저장고를 기다리지 않고 즉시 새 목록을 받아서 화면에도 바로 반영합니다.
+// (기존 로직 / 버튼 / 화면은 전혀 변경하지 않고, 이 기능만 추가되었습니다.)
+// ============================================================================
+
+async function refreshMasterDataFromNotion() {
+
+  if (isSending)
+    return;
+
+  isSending =
+    true;
+
+  const refreshButton =
+    document.getElementById(
+      "previewMasterRefreshButton"
+    );
+
+  const refreshButtonLabel =
+    refreshButton
+      ? refreshButton.textContent
+      : "";
+
+  if (refreshButton) {
+
+    refreshButton.disabled =
+      true;
+
+    refreshButton.textContent =
+      "⏳ 목록 갱신 중...";
+
+  }
+
+  try {
+
+    const data =
+      await postToGAS({
+        action: "refreshmasterdata"
+      });
+
+    if (data.status !== "success") {
+      throw new Error(
+        data.message ||
+        "목록 갱신에 실패했습니다."
+      );
+    }
+
+    if (Array.isArray(data.products)) {
+      productList = data.products.slice();
+      productList = sortProductsByRequestedOrder(productList);
+    }
+
+    if (Array.isArray(data.deliveryTypes)) {
+      deliveryTypeList = data.deliveryTypes.slice();
+    }
+
+    if (Array.isArray(data.secondDeliveryLocations)) {
+      secondDeliveryLocationList = data.secondDeliveryLocations.slice();
+    }
+
+    // ⭐ 사용자가 지금 입력한 값(거래처 / 수량 등)은 그대로 보존합니다.
+    syncCurrentPreviewDataFromForm();
+
+    if (currentPreviewData) {
+      showPreview(currentPreviewData);
+    }
+
+    alert(
+      "✅ 제품 / 납품형태 / 제2배송지 목록을 노션에서 새로 가져왔어요!"
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "❌ 목록 갱신에 실패했어요.\n\n" +
+      (error.message || String(error))
+    );
+
+  } finally {
+
+    isSending =
+      false;
+
+    if (refreshButton) {
+
+      refreshButton.disabled =
+        false;
+
+      refreshButton.textContent =
+        refreshButtonLabel || "🗂️ 목록 새로고침";
+
+    }
+
+  }
+
+}
+
 
 // ============================================================================
 // 📋 15-1. 제품 표시 순서
@@ -5291,6 +5628,23 @@ if (
 
         '</button>' +
 
+        /*
+         * ⭐⭐⭐ 신규 추가 : "🗂️ 목록 새로고침" 버튼
+         *
+         * 제품 / 납품형태 / 제2배송지 목록은 거의 바뀌지 않아
+         * 서버가 저장해 둔 목록을 쓰지만, 노션에서 제2배송지 등이
+         * 추가되었을 때 이 버튼을 누르면 즉시 새 목록을 받아옵니다.
+         */
+        '<button ' +
+        'type="button" ' +
+        'id="previewMasterRefreshButton" ' +
+        'class="preview-refresh" ' +
+        'style="background:#334155;color:#f1f5f9;">' +
+
+          '🗂️ 목록 새로고침' +
+
+        '</button>' +
+
 
         /*
          * ⭐⭐⭐ STEP 2의 "📖 노션 열기" 버튼
@@ -5721,6 +6075,19 @@ if (
     html;
 
 
+  // ⭐⭐⭐ 신규 추가 : 왼쪽 검은 상태바의 값을 오른쪽 "등록 가능 표시바"에도 그대로 표시
+  //
+  // - 오른쪽 표시바에는 "지금 노션 등록이 가능한 상태인지"만 보여줍니다.
+  // - 왼쪽 상태바와 항상 같은 정보를 함께 보여주기 때문에
+  //   두 상태바가 서로 다른 것을 기다리는 것처럼 보이던 현상이 사라집니다.
+  // - 기존 로직 / 함수 / 버튼은 전혀 변경하지 않고, 표시만 추가합니다.
+
+  setStep2ReadyBar(
+    initialDataReady ? "ready" : "loading",
+    initialDataReady ? "✅ 노션 등록 가능" : "⏳ 노션 등록 준비 중..."
+  );
+
+
   // ⭐ 거래처 전체 선택 화면
   const clientPicker =
     document.createElement("div");
@@ -6059,6 +6426,24 @@ step2ImmediateUpdateIds.forEach(function(id) {
     .addEventListener(
       "click",
       refreshInitialDataForPreview
+    );
+
+
+  /*
+   * ⭐⭐⭐ 신규 추가 : "🗂️ 목록 새로고침" 버튼 이벤트
+   *
+   * 노션에서 제품 / 납품형태 / 제2배송지 목록이 바뀌었을 때
+   * 저장고를 기다리지 않고 즉시 새 목록을 받아옵니다.
+   * (거래처 목록은 기존 "🔄 새로 고침" 규칙을 그대로 따릅니다.)
+   */
+
+  document
+    .getElementById(
+      "previewMasterRefreshButton"
+    )
+    .addEventListener(
+      "click",
+      refreshMasterDataFromNotion
     );
 
 
@@ -6985,6 +7370,13 @@ const memo =
     confirmButton.textContent =
       "⏳ 노션에 등록 중...";
 
+    // ⭐⭐⭐ 신규 추가 : 실제 등록 진행 중 표시
+
+    setStep2ReadyBar(
+      "loading",
+      "⏳ 노션 등록 진행 중..."
+    );
+
   }
 
 
@@ -7061,6 +7453,12 @@ const memo =
 
     currentPreviewData =
       null;
+    // ⭐⭐⭐ 신규 추가 : 등록 성공 → 오른쪽 표시바 완료 표시
+
+    setStep2ReadyBar(
+      "ready",
+      "🎉 노션 등록 완료!"
+    );
 
 
     previewResult.innerHTML =
@@ -7217,6 +7615,14 @@ const memo =
 
     console.error(
       error
+    );
+
+
+    // ⭐⭐⭐ 신규 추가 : 등록 실패 → 오른쪽 표시바도 "등록 불가"로
+
+    setStep2ReadyBar(
+      "fail",
+      "❌ 노션 등록 실패"
     );
 
 
@@ -7552,7 +7958,14 @@ function clearSelectedClient() {
 
 
 // ⭐ ③ STEP 2 상단 준비 상태바 (가져오는 중 / 입력 가능 / 실패)
-function setStep2StatusBar(state, message) {
+//
+// ⭐⭐⭐ 신규 추가 : readyState 파라미터 (기존 2개 인자 호출은 그대로 작동합니다)
+//
+// 왼쪽 검은 상태바의 상태가 바뀔 때, 오른쪽 "등록 가능 표시바"도
+// 같은 상태로 함께 바뀌도록 합니다. 기존 호출 방식(state, message)은
+// 그대로 작동하므로 다른 코드는 전혀 수정할 필요가 없습니다.
+//
+function setStep2StatusBar(state, message, readyState) {
 
   const bar =
     document.getElementById("step2StatusBar");
@@ -7573,6 +7986,70 @@ function setStep2StatusBar(state, message) {
   bar.classList.toggle("ready", state === "ready");
 
   bar.classList.toggle("error", state === "error");
+
+
+  // ⭐⭐⭐ 신규 추가 : 오른쪽 "등록 가능 표시바"를 왼쪽 상태바와 같은 상태로 맞춥니다.
+  //
+  // - readyState를 직접 받았으면 그 값을 사용하고 (3번째 인자)
+  // - 받지 않았으면 왼쪽 상태바의 상태(state)를 그대로 사용합니다.
+  // - 성공 / 실패 문구와 아이콘도 함께 표시합니다.
+  //
+  const mirroredState =
+    (readyState === "ready" || readyState === "loading" || readyState === "fail")
+      ? readyState
+      : (state === "ready" ? "ready" : (state === "error" ? "fail" : "loading"));
+
+  setStep2ReadyBar(
+    mirroredState,
+    mirroredState === "ready"
+      ? "✅ 노션 등록 가능"
+      : (mirroredState === "fail"
+        ? "❌ 노션 등록 불가"
+        : "⏳ 노션 등록 준비 중...")
+  );
+
+}
+
+
+// ⭐ ③-NEW. STEP 2 상단 오른쪽 "등록 가능 표시바" (신규 추가)
+//
+// 이 표시바는 "지금 노션 등록 버튼(아래 초록 버튼)을 누를 수 있는 상태인지"만 보여줍니다.
+// 실제 등록은 기존과 똑같이 아래 하단 확인 버튼으로만 진행됩니다.
+//
+function setStep2ReadyBar(state, message) {
+
+  const bar =
+    document.getElementById("step2ReadyBar");
+
+  if (!bar) return;
+
+
+  const text =
+    bar.querySelector(".step2-ready-text");
+
+  if (text && typeof message === "string") {
+
+    text.textContent = message;
+
+  }
+
+
+  const icon =
+    bar.querySelector(".step2-ready-icon");
+
+  if (icon) {
+
+    icon.textContent =
+      state === "ready"
+        ? "✅"
+        : (state === "fail" ? "❌" : "⏳");
+
+  }
+
+
+  bar.classList.toggle("step2-ready-bar-ready", state === "ready");
+
+  bar.classList.toggle("step2-ready-bar-fail", state === "fail");
 
 }
 
@@ -8080,6 +8557,7 @@ renderStatusBrand();
 
 </script>
 
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 </body>
