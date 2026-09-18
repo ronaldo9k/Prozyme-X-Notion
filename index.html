@@ -5285,20 +5285,97 @@ if (
     }
   });
 
-  const liveUpdateIds = [
-    "productSelect",
-    "quantityInput",
-    "modeSelect",
-    "sizeInput"
-  ];
+ const liveUpdateIds = [
+  "productSelect",
+  "quantityInput",
+  "modeSelect",
+  "sizeInput"
+];
 
-  liveUpdateIds.forEach(function(id) {
-    const element = document.getElementById(id);
-    if (element) {
-      element.addEventListener("change", renderTransactionSummary);
-      element.addEventListener("input", renderTransactionSummary);
+liveUpdateIds.forEach(function(id) {
+  const element = document.getElementById(id);
+
+  if (element) {
+
+    element.addEventListener(
+      "change",
+      function() {
+
+        // ⭐ 기존 화면 요약 갱신
+        renderTransactionSummary();
+
+        // ⭐ STEP 2에서 변경한 값을 즉시 저장
+        // ⚠️ Notion 등록은 하지 않습니다.
+        syncCurrentPreviewDataFromForm();
+
+      }
+    );
+
+    element.addEventListener(
+      "input",
+      function() {
+
+        // ⭐ 기존 화면 요약 갱신
+        renderTransactionSummary();
+
+        // ⭐ STEP 2에서 변경한 값을 즉시 저장
+        syncCurrentPreviewDataFromForm();
+
+      }
+    );
+  }
+});
+
+
+// =========================================================
+// ⭐ STEP 2 선택값 즉시 반영
+//
+// 제품
+// 입출고
+// 납품요청일
+// 납품형태
+// 제2배송지
+//
+// 각각 선택하는 순간 currentPreviewData에 반영합니다.
+//
+// ⚠️ Notion 등록은 하지 않습니다.
+// ⚠️ 최종 등록 버튼을 눌렀을 때만 Notion 등록됩니다.
+// =========================================================
+
+const step2ImmediateUpdateIds = [
+  "deliveryDateInput",
+  "deliveryTypeSelect",
+  "secondDeliverySelect"
+];
+
+step2ImmediateUpdateIds.forEach(function(id) {
+
+  const element =
+    document.getElementById(id);
+
+  if (!element) return;
+
+  element.addEventListener(
+    "change",
+    function() {
+
+      // ⭐ 현재 STEP 2의 모든 입력값을 즉시 저장
+      syncCurrentPreviewDataFromForm();
+
+      // ⭐ 기존 화면 요약도 즉시 갱신
+      renderTransactionSummary();
+
     }
-  });
+  );
+
+});
+
+
+// =========================================================
+// ⭐ 입출고 기본값 / 현대바이오랜드 자동 선택
+//
+// 기존 코드 그대로 유지합니다.
+// =========================================================
 
   const modeSelectForDefault = document.getElementById("modeSelect");
   if (modeSelectForDefault) {
