@@ -890,36 +890,84 @@
     }
 
 
-    /* ========================================================================
-       ⭐ statusCard
-       ======================================================================== */
+/* ========================================================================
+   ⭐ statusCard
+   ⭐ 첫 화면 하단 상태 표시 영역
+   ======================================================================== */
 
-    #statusCard {
+#statusCard {
 
-      position: sticky;
+  position: sticky;
 
-      top: 8px;
+  top: 8px;
 
-      z-index: 100;
+  z-index: 100;
 
-      width: 100%;
+  width: 100%;
 
-      margin-top: 8px;
+  min-height: 50px;
 
-      background:
-        rgba(255,255,255,.97);
+  margin-top: 8px;
 
-      box-shadow:
-        0 10px 30px rgba(0,0,0,.38);
+  box-sizing: border-box;
 
-    }
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 12px 20px;
+
+  background:
+    rgba(5, 7, 11, 0.72);
+
+  border:
+    1px solid rgba(255, 215, 0, 0.20);
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.38),
+    inset 0 1px 0 rgba(255,255,255,.06);
+
+  backdrop-filter: blur(10px);
+
+  -webkit-backdrop-filter: blur(10px);
+
+  color: #ffffff;
+
+  text-align: center;
+
+  line-height: 1.6;
+
+}
 
 
-    button:disabled {
+/* ⭐ 상태 표시 안의 내용도 정확히 가운데 */
 
-      cursor: not-allowed;
+#statusCard #inputResult {
 
-    }
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+
+}
+
+
+/* ⭐ 버튼 비활성화 */
+
+button:disabled {
+
+  cursor: not-allowed;
+
+}
 
 
     /* ========================================================================
@@ -1037,6 +1085,16 @@
        * 기존 "← 입력 화면" 버튼 옆에
        * 새 "🔄 새로 고침" 버튼을 붙이기 위한 최소 추가 영역입니다.
        * ======================================================================== */
+
+    .preview-top {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 8px 0;
+    }
 
     .preview-actions {
 
@@ -2051,6 +2109,8 @@
       white-space: nowrap;
     }
 
+
+
     /* 🆕 입고/출고 선택된 버튼을 색으로 구분 */
 .transaction-mode-button.selected {
   border: 2px solid #15803d;       /* 기존 1.5px → 2px, 색상은 진한 녹색 */
@@ -2077,9 +2137,181 @@
       minmax(0, 1fr)
       minmax(0, 1fr);
   }
+/* 2번 해결: 모바일에서 버튼 높이를 줄임 */
+  .client-choice-row button,
+  .client-choice-row input, 
+  .client-choice-row .transaction-mode-button { 
+    padding-top: 6px;    /* 위쪽 내부 여백 단축 */
+    padding-bottom: 6px; /* 아래쪽 내부 여백 단축 */
+    height: auto;        /* 고정 높이가 설정되어 있다면 해제하고 패딩으로 조절 */
+    font-size: 14px;     /* (선택) 모바일 화면에 맞춰 글자 크기도 살짝 줄임 */
+  }
+  
 }
 
+ /* ============================================================================
+   ⭐ 앱 시작 시 노션 데이터 로딩 표시
+   ============================================================================ */
+
+.notion-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 4px solid rgba(255, 215, 0, 0.20);
+  border-top-color: #FFD700;
+  border-radius: 50%;
+  animation: notionLoadingSpin 0.8s linear infinite;
+}
+
+.loading-text {
+  width: 100%;
+
+  font-size: 15px;
+  line-height: 1.5;
+
+  text-align: center;
+}
+
+@keyframes notionLoadingSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}   
+
+/* =========================================================
+   ⭐ 첫 화면 직접입력 + 새로고침 한 줄
+   ========================================================= */
+
+.direct-refresh-row {
+  display: flex;
+  gap: 9px;
+  width: 100%;
+  margin: 0;
+}
+
+/* 직접 입력 + 첫 화면 새로고침 */
+#inputScreen > .card:first-of-type .direct-refresh-row button {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+}
+
+/* 기존 첫 화면 버튼의 고정 170px 설정을
+   direct-refresh-row 안에서는 무시 */
+#inputScreen > .card:first-of-type .direct-refresh-row #directButton,
+#inputScreen > .card:first-of-type .direct-refresh-row #inputRefreshButton {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+}
     
+  
+
+    /* ========================================================================
+       ⭐⭐⭐ 2026-09 속도 최우선 음성 UI
+       기존 레이아웃을 유지하면서 새 음성 흐름만 추가합니다.
+       ======================================================================== */
+
+    .client-voice-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 56px;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .client-voice-button {
+      width: 56px !important;
+      min-width: 56px !important;
+      max-width: 56px !important;
+      height: 50px !important;
+      min-height: 50px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border-radius: 12px !important;
+      background: #111827 !important;
+      color: #fff !important;
+      font-size: 22px !important;
+      line-height: 1 !important;
+      text-shadow: none !important;
+      box-shadow: 0 4px 10px rgba(0,0,0,.12) !important;
+    }
+
+    .client-voice-button.listening {
+      background: #15803d !important;
+    }
+
+    .preview-top {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 8px 0;
+      margin-bottom: 10px;
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .preview-actions {
+      width: 100%;
+    }
+
+    .preview-back,
+    .preview-refresh,
+    .preview-notion-home {
+      min-height: 40px;
+    }
+
+    .client-picker-header {
+      padding: 6px 10px !important;
+      min-height: 50px;
+      gap: 7px;
+    }
+
+    .client-picker-back {
+      width: 38px !important;
+      min-width: 38px !important;
+      max-width: 38px !important;
+      padding: 5px !important;
+      font-size: 24px !important;
+    }
+
+    .client-picker-title {
+      font-size: 17px !important;
+    }
+
+    @media (max-width: 500px) {
+      .client-voice-row {
+        grid-template-columns: minmax(0, 1fr) 52px;
+      }
+
+      .client-voice-button {
+        width: 52px !important;
+        min-width: 52px !important;
+        max-width: 52px !important;
+      }
+
+      .preview-top {
+        margin-left: -16px;
+        margin-right: -16px;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+    }
+
   </style>
 
 </head>
@@ -2201,6 +2433,7 @@
 
       </button>
 
+      <div class="direct-refresh-row">
 
       <button id="directButton">
 
@@ -2214,6 +2447,14 @@
 
       </button>
 
+       <button
+    id="inputRefreshButton"
+    type="button"
+  >
+    🔄 새로 고침
+  </button>
+
+</div>  
 
       <div
         id="timer"
@@ -2225,39 +2466,16 @@
 
     <div
       id="statusCard"
-      class="card"
-    >
+        <div id="result">
+
+    
 
       <div id="result">
-        버튼을 누르고 말씀해주세요.
+           버튼을 누르고 말씀해주세요.
       </div>
 
     </div>
 
-
-    <!-- ======================================================================
-         ⭐⭐⭐ STEP INDICATOR
-         ====================================================================== -->
-
-    <div class="step-indicator">
-
-      <div class="step-dot active">
-        1
-      </div>
-
-      <div class="step-line"></div>
-
-      <div class="step-dot">
-        2
-      </div>
-
-      <div class="step-line"></div>
-
-      <div class="step-dot">
-        3
-      </div>
-
-    </div>
 
 
   </div>
@@ -2284,224 +2502,7 @@
 // ============================================================================
 
 const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbz7zZn7TbP2yN75jcCwxpc5k962OR13p1ly_5fc1o5ymmNpkTO2X29GqEesmSclO_FI/exec";
-
-
-// ============================================================================
-// ⭐⚡ [속도 개선] 공용 도우미들
-//    1) sleep            : 정해진 시간만큼 쉬는 함수
-//    2) fetchWithTimeout : 서버가 응답이 없으면 정해진 시간에 끊는 함수
-//    3) 캐시 함수들       : 받은 데이터를 휴대폰에 저장해 두었다가 다시 쓰기
-//    4) applyInitialData : 저장해 둔 데이터를 화면 목록에 채우기
-//    5) warmupGasColdStart : 서버를 미리 깨워 두는 함수(웜업)
-// ============================================================================
-
-function sleep(ms) {
-
-  return new Promise(
-    function(resolve) {
-      setTimeout(resolve, ms);
-    }
-  );
-
-}
-
-
-function fetchWithTimeout(ms) {
-
-  if (
-    typeof AbortController === "undefined"
-  ) {
-
-    return undefined;
-
-  }
-
-  const controller =
-    new AbortController();
-
-  setTimeout(
-    function() {
-      controller.abort();
-    },
-    ms
-  );
-
-  return controller.signal;
-
-}
-
-
-const INITIAL_DATA_CACHE_KEY =
-  "procareInitialDataCacheV1";
-
-const INITIAL_DATA_TIMEOUT_MS =
-  24 * 60 * 60 * 1000;
-
-const GAS_RESPONSE_CACHE_MS =
-  5 * 60 * 1000;
-
-
-function readInitialDataCache(
-  key,
-  maxAgeMs
-) {
-
-  try {
-
-    if (!window.localStorage) {
-
-      return null;
-
-    }
-
-    const raw =
-      window.localStorage.getItem(key);
-
-    if (!raw) {
-
-      return null;
-
-    }
-
-    const parsed =
-      JSON.parse(raw);
-
-    if (
-      !parsed ||
-      typeof parsed.savedAt !== "number"
-    ) {
-
-      return null;
-
-    }
-
-    const maxAge =
-      typeof maxAgeMs === "number"
-        ? maxAgeMs
-        : INITIAL_DATA_TIMEOUT_MS;
-
-    if (
-      Date.now() - parsed.savedAt > maxAge
-    ) {
-
-      window.localStorage.removeItem(key);
-
-      return null;
-
-    }
-
-    return parsed.data || null;
-
-  } catch (error) {
-
-    return null;
-
-  }
-
-}
-
-
-function writeInitialDataCache(key, data) {
-
-  try {
-
-    if (!window.localStorage) {
-
-      return;
-
-    }
-
-    window.localStorage.setItem(
-      key,
-      JSON.stringify({
-        savedAt: Date.now(),
-        data: data
-      })
-    );
-
-  } catch (error) {
-
-    // 저장 공간이 부족하면 조용히 건너뜁니다.
-
-  }
-
-}
-
-
-function applyInitialData(data) {
-
-  clientList =
-    Array.isArray(data.clients)
-      ? data.clients.slice()
-      : [];
-
-  productList =
-    Array.isArray(data.products)
-      ? data.products.slice()
-      : [];
-
-  deliveryTypeList =
-    Array.isArray(data.deliveryTypes)
-      ? data.deliveryTypes
-      : [];
-
-  secondDeliveryLocationList =
-    Array.isArray(data.secondDeliveryLocations)
-      ? data.secondDeliveryLocations
-      : [];
-
-  clientList.sort(
-    function(a, b) {
-
-      return String(a.name || "").localeCompare(
-        String(b.name || ""),
-        "ko"
-      );
-
-    }
-  );
-
-  productList =
-    sortProductsByRequestedOrder(
-      productList
-    );
-
-}
-
-
-let gasWarmupStarted = false;
-
-
-function warmupGasColdStart() {
-
-  if (gasWarmupStarted) {
-
-    return;
-
-  }
-
-  gasWarmupStarted = true;
-
-  setTimeout(
-    function() {
-
-      postToGAS({
-        action: "analyze",
-        text: "웜업",
-        mode: "출고",
-        warmup: true
-      }).catch(
-        function() {
-          // 웜업은 실패해도 아무 상관 없습니다.
-        }
-      );
-
-    },
-    3000
-  );
-
-}
+  "https://script.google.com/macros/s/AKfycbwkpTXrgO9eRvZGXtwbizlSL-3tXxp2XbudLA3c0ZZdR7SdXg7Kxm9xE6m7Xwz2qDt9/exec";
 
 
 // ============================================================================
@@ -2596,6 +2597,15 @@ let selectedTransactionMode = "출고";
  * 현재 미리보기 데이터를 보관합니다.
  */
 let currentPreviewData = null;
+
+// ⭐ 앱 시작 시 Notion 초기 데이터 준비 상태
+let initialDataReady = false;
+let initialDataLoading = false;
+
+// ⭐ 거래처만 저장하는 초경량 브라우저 캐시
+const CLIENT_CACHE_KEY = "prozymeClientCacheV2";
+const CLIENT_CACHE_MAX_AGE = 24 * 60 * 60 * 1000;
+
 
 
 // ============================================================================
@@ -2854,394 +2864,17 @@ startButton.addEventListener(
   "click",
   function() {
 
-    if (
-      isSending ||
-      !SpeechRecognition
-    ) {
-
-      return;
-
-    }
-
-
-    currentInputMode =
-      "voice";
-
-
-    if (isRecording) {
-
-      finishRequested =
-        false;
-
-      startButton.disabled =
-        true;
-
-      finishButton.disabled =
-        false;
-
-
-      inputResult.innerHTML =
-
-        '<div class="listening">' +
-        '🎙️ 다시 듣고 있어요...<br><br>' +
-        '</div>' +
-
-        (
-          displayedTranscript
-            ? escapeHtml(
-                displayedTranscript
-              )
-            : "말씀해주세요."
-        );
-
-
-      startRecognition();
-
-      return;
-
-    }
-
-
-    pendingToken =
-      null;
-
-    finalTranscript =
-      "";
-
-    interimTranscript =
-      "";
-
-    displayedTranscript =
-      "";
-
-    finishRequested =
-      false;
-
-    isRecording =
-      true;
-
-    startButton.disabled =
-      true;
-
-    finishButton.disabled =
-      false;
-
-    directButton.disabled =
-      true;
-
-
-    setStartButtonLabel(
-      "듣는 중"
-    );
-
-
-    timer.textContent =
-      "";
-
-
-    inputResult.innerHTML =
-      '<div class="listening">' +
-      '🎙️ 듣고 있어요...<br><br>' +
-      '말씀해주세요.' +
-      '</div>';
-
-
-    recognition =
-      new SpeechRecognition();
-
-
-    recognition.lang =
-      "ko-KR";
-
-    recognition.continuous =
-      true;
-
-    recognition.interimResults =
-      true;
-
-    recognition.maxAlternatives =
-      1;
-
-
-    recognition.onresult =
-      function(event) {
-
-        let newFinal =
-          "";
-
-        let newInterim =
-          "";
-
-
-        for (
-          let i = event.resultIndex;
-          i < event.results.length;
-          i++
-        ) {
-
-          const transcript =
-            cleanText(
-              event.results[i][0].transcript
-            );
-
-
-          if (
-            event.results[i].isFinal
-          ) {
-
-            newFinal =
-              appendWithoutDuplicate(
-                newFinal,
-                transcript
-              );
-
-          } else {
-
-            newInterim =
-              appendWithoutDuplicate(
-                newInterim,
-                transcript
-              );
-
-          }
-
-        }
-
-
-        if (newFinal) {
-
-          finalTranscript =
-            appendWithoutDuplicate(
-              finalTranscript,
-              newFinal
-            );
-
-        }
-
-
-        interimTranscript =
-          newInterim;
-
-
-        showCurrentText();
-
-      };
-
-
-    recognition.onend =
-      function() {
-
-        recognitionRunning =
-          false;
-
-
-        if (
-          isRecording &&
-          !finishRequested
-        ) {
-
-          /*
-           * 🆕 기존의 "이어서 말하기" 수동 기능은 그대로 유지합니다.
-           *
-           * 모바일에서는 onend가 발생하더라도
-           * 사용자가 직접 버튼을 누르지 않아도 되도록
-           * 0.3초 후 자동으로 다시 시작합니다.
-           *
-           * ⭐ finishRequested === true이면
-           * 사용자가 "말하기 완료"를 누른 것이므로
-           * 절대로 자동 재시작하지 않습니다.
-           */
-
-          startButton.disabled =
-            false;
-
-          setStartButtonLabel(
-            "이어서 말하기"
-          );
-
-          finishButton.disabled =
-            false;
-
-
-          if (displayedTranscript) {
-
-            inputResult.innerHTML =
-              escapeHtml(
-                displayedTranscript
-              );
-
-          }
-
-
-          /*
-           * 🆕 혹시 같은 onend가 연속으로 발생하여
-           * 기존 자동 재시작 예약이 남아 있다면
-           * 먼저 취소하고 새로 하나만 예약합니다.
-           */
-          clearTimeout(
-            recognitionRestartTimer
-          );
-
-
-          /*
-           * 🆕 모바일 자동 재시작
-           *
-           * 300ms 정도만 기다린 뒤 다시 시작합니다.
-           *
-           * 너무 길게 기다리지 않으면서도
-           * 모바일 브라우저가 recognition을 정리할
-           * 아주 짧은 시간을 확보합니다.
-           */
-          recognitionRestartTimer =
-            setTimeout(
-              function() {
-
-                recognitionRestartTimer =
-                  null;
-
-
-                /*
-                 * 사용자가 그 사이에
-                 * "말하기 완료"를 눌렀다면
-                 * 절대로 다시 시작하지 않습니다.
-                 */
-                if (
-                  isRecording &&
-                  !finishRequested &&
-                  recognition &&
-                  !recognitionRunning
-                ) {
-
-                  startRecognition();
-
-                }
-
-              },
-              300
-            );
-
-        }
-
-      };
-
-
-    recognition.onerror =
-      function(event) {
-
-        console.log(
-          "음성인식 오류:",
-          event.error
-        );
-
-
-        recognitionRunning =
-          false;
-
-
-        if (
-          event.error ===
-          "not-allowed"
-        ) {
-
-          inputResult.innerHTML =
-            '<div class="error">' +
-            '❌ 마이크 사용이 차단되었습니다.<br><br>' +
-            '브라우저 주소창의 마이크 권한을 허용해주세요.' +
-            '</div>';
-
-
-          isRecording =
-            false;
-
-          finishRequested =
-            true;
-
-          startButton.disabled =
-            false;
-
-          setStartButtonLabel(
-            "말하기 시작"
-          );
-
-          finishButton.disabled =
-            true;
-
-          directButton.disabled =
-            false;
-
-          return;
-
-        }
-
-
-        if (
-          event.error === "no-speech" ||
-          event.error === "aborted"
-        ) {
-
-          return;
-
-        }
-
-      };
-
-
-    recognition.onstart =
-      function() {
-
-        recognitionRunning =
-          true;
-
-
-        /*
-         * 🆕 자동 재시작이 성공하면
-         * 사용자에게 다시 정상적으로 듣고 있다는 것을
-         * 버튼 상태로 보여줍니다.
-         *
-         * 최초 "말하기 시작"에서도 동일한 상태이므로
-         * 기존 화면 동작에는 변화가 없습니다.
-         */
-        if (
-          isRecording &&
-          !finishRequested
-        ) {
-
-          startButton.disabled =
-            true;
-
-          setStartButtonLabel(
-            "듣는 중"
-          );
-
-          finishButton.disabled =
-            false;
-
-        }
-
-      };
-
-
-    startRecognition();
-
-
-    clearTimeout(
-      recordingTimer
-    );
-
-
-    recordingTimer =
-      setTimeout(
-        function() {
-
-          if (isRecording) {
-
-            finishRecording();
-
-          }
-
-        },
-        30000
-      );
+    if (isSending || !SpeechRecognition) return;
+
+    /*
+     * ⭐⭐⭐ 새 음성 구조
+     *
+     * 첫 화면에서는 Notion 거래처 데이터를 읽지 않습니다.
+     *
+     * 먼저 STEP 2를 열고, STEP 2에서 거래처 목록을 준비한 뒤
+     * 거래처 + 수량만 약 5초간 받습니다.
+     */
+    startDirectInput(true);
 
   }
 );
@@ -3321,7 +2954,9 @@ directButton.addEventListener(
 );
 
 
-async function startDirectInput() {
+async function startDirectInput(autoStartVoice) {
+
+  autoStartVoice = autoStartVoice === true;
 
   if (isSending)
     return;
@@ -3416,7 +3051,7 @@ async function startDirectInput() {
 
     memo:
       "",
-
+    
     text:
       "직접 입력"
 
@@ -3441,6 +3076,15 @@ async function startDirectInput() {
   showPreview(
     localPreview
   );
+
+
+  /*
+   * ⭐⭐⭐ STEP 2에서만 거래처 목록을 준비합니다.
+   *
+   * 첫 화면에서는 절대로 거래처 DB를 호출하지 않습니다.
+   * 캐시가 있으면 즉시 적용하고, 최신 목록은 백그라운드에서 갱신합니다.
+   */
+  loadClientDataForStep2();
 
 
   /*
@@ -3510,6 +3154,48 @@ async function startDirectInput() {
      * 현재 미리보기 데이터로 갱신
      */
 
+    // ⭐ STEP 2 전용 데이터는 directPreview에서 한 번만 가져옵니다.
+    productList =
+      Array.isArray(data.products) ? data.products.slice() : [];
+
+    deliveryTypeList =
+      Array.isArray(data.deliveryTypes) ? data.deliveryTypes.slice() : [];
+
+    secondDeliveryLocationList =
+      Array.isArray(data.secondDeliveryLocations)
+        ? data.secondDeliveryLocations.slice()
+        : [];
+
+    productList =
+      sortProductsByRequestedOrder(productList);
+
+
+    // ⭐ 서버 준비값을 기존 사용자가 입력한 client/quantity와 합칩니다.
+    data.clientPageId =
+      currentPreviewData && currentPreviewData.clientPageId
+        ? currentPreviewData.clientPageId
+        : data.clientPageId;
+
+    data.clientName =
+      currentPreviewData && currentPreviewData.clientName
+        ? currentPreviewData.clientName
+        : data.clientName;
+
+    data.quantity =
+      currentPreviewData && currentPreviewData.quantity
+        ? currentPreviewData.quantity
+        : data.quantity;
+
+    data.mode =
+      currentPreviewData && currentPreviewData.mode
+        ? currentPreviewData.mode
+        : data.mode;
+
+    data.memo =
+      currentPreviewData && typeof currentPreviewData.memo !== "undefined"
+        ? currentPreviewData.memo
+        : (data.memo || "");
+
     currentPreviewData =
       data;
 
@@ -3525,17 +3211,22 @@ async function startDirectInput() {
      * 여기서 실제 GAS 결과를 바로 적용합니다.
      */
 
-    if (
-      clientList.length > 0 ||
-      productList.length > 0 ||
-      deliveryTypeList.length > 0 ||
-      secondDeliveryLocationList.length > 0
-    ) {
+    showPreview(
+      data
+    );
 
-      showPreview(
-        data
-      );
 
+    if (autoStartVoice) {
+      if (clientList.length > 0) {
+        setTimeout(function() {
+          const voiceButton =
+            document.getElementById("clientVoiceButton");
+          if (voiceButton) voiceButton.click();
+        }, 80);
+      } else {
+        data._autoStartVoice = true;
+        currentPreviewData = data;
+      }
     }
 
 
@@ -3700,7 +3391,204 @@ async function startDirectInput() {
 // 🛑 11. 녹음 종료
 // ============================================================================
 
+// ============================================================================
+// 🎤 11-NEW. 짧은 음성 입력
+//
+// ⭐ 음성으로 필요한 것은 딱 2개입니다.
+//    ① 거래처
+//    ② 수량
+//
+// ⭐ 최대 약 5초만 듣고 브라우저에서 바로 거래처를 찾습니다.
+// ⭐ 긴 문장을 GAS에 보내지 않습니다.
+// ============================================================================
+
+function getKoreanQuantityLocal(text) {
+
+  const raw = String(text || "").replace(/\s+/g, "");
+
+  const digit = raw.match(/(\d+)\s*(박스|box|개|통|팩)?/i);
+
+  if (digit) {
+    const n = Number(digit[1]);
+    if (Number.isInteger(n) && n > 0) return n;
+  }
+
+  const map = {
+    "한":1,"하나":1,"두":2,"둘":2,"세":3,"셋":3,"네":4,"넷":4,
+    "다섯":5,"여섯":6,"일곱":7,"여덟":8,"아홉":9,"열":10
+  };
+
+  const m = raw.match(/(하나|한|두|둘|세|셋|네|넷|다섯|여섯|일곱|여덟|아홉|열)(?:박스|개|통|팩)?/);
+
+  return m && map[m[1]] ? map[m[1]] : 1;
+}
+
+
+function findClientLocalFromVoice(text) {
+
+  const normalized = String(text || "")
+    .toLowerCase()
+    .replace(/\s+/g, "")
+    .replace(/[.,!?]/g, "");
+
+  const exact = clientList.filter(function(client) {
+    const name = String(client.name || "")
+      .toLowerCase()
+      .replace(/\s+/g, "");
+    return name && normalized.includes(name);
+  });
+
+  if (exact.length === 1) return exact[0];
+  if (exact.length > 1) return null;
+
+  // ⭐ 짧은 음성에서도 작은 오인식을 견디기 위한 간단한 편집거리 검색
+  function distance(a,b) {
+    const dp = Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));
+    for(let i=0;i<=a.length;i++) dp[i][0]=i;
+    for(let j=0;j<=b.length;j++) dp[0][j]=j;
+    for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++) {
+      dp[i][j]=Math.min(dp[i-1][j]+1,dp[i][j-1]+1,dp[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+    }
+    return dp[a.length][b.length];
+  }
+
+  const candidates=[];
+  clientList.forEach(function(client){
+    const name=String(client.name||"").toLowerCase().replace(/\s+/g,"");
+    if(name.length<3 || !normalized) return;
+    const allowed=name.length>=6?2:1;
+    let best=999;
+    const min=Math.max(1,name.length-allowed);
+    const max=Math.min(normalized.length,name.length+allowed);
+    for(let len=min;len<=max;len++){
+      for(let i=0;i+len<=normalized.length;i++){
+        best=Math.min(best,distance(name,normalized.substring(i,i+len)));
+      }
+    }
+    if(best<=allowed){
+      candidates.push({client:client,score:Math.round((1-best/name.length)*100)});
+    }
+  });
+
+  candidates.sort((a,b)=>b.score-a.score);
+  if(!candidates.length || candidates[0].score<75) return null;
+  if(candidates[1] && candidates[0].score-candidates[1].score<8) return null;
+  return candidates[0].client;
+}
+
+
+function applyQuickVoiceToPreview(text) {
+
+  const client = findClientLocalFromVoice(text);
+  const quantity = getKoreanQuantityLocal(text);
+
+  if (!client) {
+    inputResult.innerHTML =
+      '<div class="error">' +
+      '❌ 거래처를 정확하게 찾지 못했어요.<br><br>' +
+      '예: 홍길동상사 / 홍길동상사 열두 개' +
+      '</div>';
+    return false;
+  }
+
+  const defaultProduct = getDefault15Product();
+  if (!defaultProduct) {
+    inputResult.innerHTML = "📦 제품 정보를 준비하는 중입니다.";
+    return false;
+  }
+
+  currentInputMode = "voice";
+
+  const localPreview = {
+    status:"preview",
+    token:null,
+    clientPageId:client.id,
+    clientName:client.name,
+    productPageId:defaultProduct.id,
+    productName:defaultProduct.name,
+    size:"15 KG",
+    quantity:quantity,
+    mode:selectedTransactionMode,
+    deliveryDate:getTodayLocal(),
+    deliveryType:"직송",
+    secondDeliveryLocation:"",
+    memo:"",
+    text:text
+  };
+
+  currentPreviewData = localPreview;
+  showPreview(localPreview);
+  return true;
+}
+
+
+async function finishQuickVoiceRecording() {
+
+  if (!isRecording) return;
+
+  isRecording=false;
+  finishRequested=true;
+  clearTimeout(recordingTimer);
+  recognitionRunning=false;
+
+  if (recognition) {
+    try { recognition.stop(); } catch(e) {}
+  }
+
+  startButton.disabled=false;
+  setStartButtonLabel("말하기 시작");
+  finishButton.disabled=true;
+  directButton.disabled=false;
+  timer.textContent="";
+
+  const text=cleanText(finalTranscript || displayedTranscript);
+  if(!text){
+    inputResult.innerHTML='<div class="error">❌ 음성 내용을 듣지 못했어요.<br><br>다시 말해주세요.</div>';
+    return;
+  }
+
+  const opened=applyQuickVoiceToPreview(text);
+  if(!opened) return;
+
+  // ⭐ STEP 2는 즉시 보여주고, 등록용 토큰/제품/옵션만 백그라운드에서 준비합니다.
+  isSending=true;
+  try {
+    const data=await postToGAS({action:"directPreview",mode:selectedTransactionMode});
+    if(data.status!=="preview") throw new Error(data.message||"등록 준비에 실패했습니다.");
+
+    productList=Array.isArray(data.products)?data.products.slice():[];
+    deliveryTypeList=Array.isArray(data.deliveryTypes)?data.deliveryTypes.slice():[];
+    secondDeliveryLocationList=Array.isArray(data.secondDeliveryLocations)?data.secondDeliveryLocations.slice():[];
+    productList=sortProductsByRequestedOrder(productList);
+
+    const local=currentPreviewData||{};
+    data.clientPageId=local.clientPageId||data.clientPageId||"";
+    data.clientName=local.clientName||data.clientName||"";
+    data.quantity=local.quantity||data.quantity||1;
+    data.mode=local.mode||data.mode||selectedTransactionMode;
+    data.text=local.text||text;
+    data.memo=local.memo||"";
+    currentPreviewData=data;
+    pendingToken=data.token;
+    showPreview(data);
+  } catch(error) {
+    const button=document.getElementById("confirmButton");
+    if(button){button.disabled=true;button.textContent="⚠️ 등록 준비 실패";}
+    const box=document.createElement("div");
+    box.className="error";
+    box.style.marginTop="10px";
+    box.innerHTML='❌ 등록 준비에 실패했어요.<br><br>'+escapeHtml(error.message||String(error));
+    previewResult.appendChild(box);
+  } finally {
+    isSending=false;
+  }
+}
+
+
 function finishRecording() {
+
+  finishQuickVoiceRecording();
+  return;
 
   if (!isRecording)
     return;
@@ -3830,156 +3718,53 @@ function finalizeAndSend(text) {
 
 async function postToGAS(payload) {
 
-  // ⭐⭐⭐ [속도 개선 1] 읽기 요청(목록/분석 미리보기)은 잠시 동안
-  //        저장해 둔 답을 재사용합니다. 등록(쓰기) 요청은 절대 캐시하지 않습니다.
-  const isReadAction =
-    payload &&
-    (payload.action === "initialData" ||
-     payload.action === "analyze" ||
-     payload.action === "directPreview");
+  const response =
+    await fetch(
+      GAS_URL,
+      {
+        method: "POST",
 
-  const cacheKey = isReadAction
-    ? "gasCache:" +
-      payload.action +
-      ":" +
-      String(payload.text || "")
-    : null;
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
 
-  if (cacheKey && !payload.forceFresh) {
-
-    try {
-
-      const cached =
-        readInitialDataCache(
-          cacheKey,
-          GAS_RESPONSE_CACHE_MS
-        );
-
-      if (cached) {
-
-        console.log(
-          "⚡ 저장해 둔 응답 재사용:",
-          payload.action
-        );
-
-        return cached;
+        body:
+          JSON.stringify(payload)
 
       }
-
-    } catch (cacheError) {
-
-      // 캐시를 못 읽어도 새로 받으면 됩니다.
-
-    }
-
-  }
-
-  // ⭐⭐⭐ [속도 개선 2·3] 읽기 요청은 최대 20초만 기다리고,
-  //        실패하면 최대 3번까지 다시 시도합니다.
-  //        등록(쓰기) 요청은 두 번 등록되는 사고가 생기면 안 되므로
-  //        원래 방식 그대로(재시도 없음) 진행합니다.
-  const maxAttempts =
-    isReadAction ? 3 : 1;
-
-  let lastError = null;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-
-    try {
-
-      const response =
-        await fetch(
-          GAS_URL,
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "text/plain;charset=utf-8"
-            },
-
-            body:
-              JSON.stringify(payload),
-
-            signal:
-              isReadAction
-                ? fetchWithTimeout(20000)
-                : undefined
-
-          }
-        );
+    );
 
 
-      const raw =
-        await response.text();
+  const raw =
+    await response.text();
 
 
-      console.log(
-        "GAS 응답:",
-        raw
-      );
+  console.log(
+    "GAS 응답:",
+    raw
+  );
 
 
-      let data;
+  let data;
 
 
-      try {
+  try {
 
-        data =
-          JSON.parse(raw);
+    data =
+      JSON.parse(raw);
 
-      } catch (jsonError) {
+  } catch (jsonError) {
 
-        throw new Error(
-          "GAS 응답을 읽지 못했습니다.\n\n" +
-          raw
-        );
-
-      }
-
-
-      // ⭐ 성공한 읽기 답은 잠시 저장해 둡니다.
-      if (cacheKey && data && data.status === "success") {
-
-        try {
-
-          writeInitialDataCache(cacheKey, data);
-
-        } catch (cacheWriteError) {
-
-          // 저장이 안 되어도 사용에는 문제가 없습니다.
-
-        }
-
-      }
-
-
-      return data;
-
-    } catch (attemptError) {
-
-      lastError = attemptError;
-
-      console.warn(
-        "⚠️ GAS 요청 실패 (시도 " + attempt + "/" + maxAttempts + ")",
-        attemptError && attemptError.message
-          ? attemptError.message
-          : attemptError
-      );
-
-      if (attempt < maxAttempts) {
-
-        await sleep(500 * attempt);
-
-      }
-
-    }
+    throw new Error(
+      "GAS 응답을 읽지 못했습니다.\n\n" +
+      raw
+    );
 
   }
 
 
-  throw lastError ||
-    new Error("GAS에 연결하지 못했습니다.");
+  return data;
 
 }
 
@@ -4072,220 +3857,180 @@ async function sendAnalyzeToGAS(text) {
 // 📋 15. 초기 거래처 / 제품 / Select 목록
 // ============================================================================
 
-async function loadInitialData() {
+function readClientCache() {
+
+  try {
+    const raw = localStorage.getItem(CLIENT_CACHE_KEY);
+    if (!raw) return null;
+    const saved = JSON.parse(raw);
+    if (!saved || !Array.isArray(saved.clients)) return null;
+    if (Date.now() - Number(saved.savedAt || 0) > CLIENT_CACHE_MAX_AGE) return null;
+    return saved.clients;
+  } catch (error) {
+    return null;
+  }
+}
+
+
+function writeClientCache(clients) {
+
+  try {
+    localStorage.setItem(
+      CLIENT_CACHE_KEY,
+      JSON.stringify({savedAt:Date.now(),clients:clients})
+    );
+  } catch (error) {
+    console.log("거래처 캐시 저장 생략:", error);
+  }
+}
+
+
+function applyClientList(clients) {
+
+  clientList = Array.isArray(clients) ? clients.slice() : [];
+  clientList.sort(function(a,b){
+    return String(a.name||"").localeCompare(String(b.name||""),"ko");
+  });
+
+  if (clientList.length > 0) {
+    initialDataReady = true;
+  }
+}
+
+
+async function loadClientDataForStep2() {
+
+  initialDataLoading = true;
+
+  // ⭐ STEP 2에 들어왔을 때만 기존 거래처 캐시를 먼저 적용합니다.
+  const cached = readClientCache();
+
+  if (cached && cached.length > 0) {
+    applyClientList(cached);
+  }
 
   try {
 
     const data =
       await postToGAS({
-        action: "initialData",
-        forceFresh: true
+        action: "initialData"
       });
 
 
-    // ⭐⭐⭐ [속도 개선] 받아온 목록을 휴대폰에 저장해 둡니다.
-    //        다음에 앱을 열면 이 저장해 둔 데이터를 먼저 보여주고,
-    //        새 데이터는 조용히 그 뒤에 받아서 바꿔치기합니다.
-    writeInitialDataCache(
-      INITIAL_DATA_CACHE_KEY,
-      data
-    );
-
-
-    if (
-      data.status !== "success"
-    ) {
-
+    if (data.status !== "success") {
       throw new Error(
         data.message ||
-        "초기 데이터를 가져오지 못했습니다."
+        "거래처 데이터를 가져오지 못했습니다."
       );
-
     }
 
 
-    clientList =
-      Array.isArray(data.clients)
-        ? data.clients.slice()
-        : [];
+    applyClientList(data.clients);
+    writeClientCache(clientList);
 
+    initialDataReady = clientList.length > 0;
+    initialDataLoading = false;
 
-    productList =
-      Array.isArray(data.products)
-        ? data.products.slice()
-        : [];
-
-
-    deliveryTypeList =
-      Array.isArray(data.deliveryTypes)
-        ? data.deliveryTypes
-        : [];
-
-
-    secondDeliveryLocationList =
-      Array.isArray(
-        data.secondDeliveryLocations
-      )
-        ? data.secondDeliveryLocations
-        : [];
-
-
-    clientList.sort(
-      function(a, b) {
-
-        return String(
-          a.name || ""
-        ).localeCompare(
-          String(
-            b.name || ""
-          ),
-          "ko"
-        );
-
-      }
-    );
-
-
-    productList =
-      sortProductsByRequestedOrder(
-        productList
-      );
-
-
-    // ⭐⭐⭐ [속도 개선] 서버를 미리 깨워 둡니다(웜업).
-    //        덕분에 나중에 음성을 말할 때 첫 분석이 빨라집니다.
-    warmupGasColdStart();
-
-
-    console.log(
-      "거래처 수:",
-      clientList.length
-    );
-
-
-    console.log(
-      "제품 수:",
-      productList.length
-    );
-
-
-    console.log(
-      "납품형태 옵션:",
-      deliveryTypeList
-    );
-
-
-    console.log(
-      "제2배송지 옵션:",
-      secondDeliveryLocationList
-    );
-
+    console.log("✅ STEP 2 거래처 데이터 준비 완료");
+    console.log("거래처 수:", clientList.length);
 
     /*
-     * ======================================================================
-     * ⭐⭐⭐ 이번 문제의 핵심 수정
-     *
-     * 직접 입력을 누르는 순간에는 화면을 먼저 보여주기 때문에
-     * initialData가 아직 도착하지 않았을 수 있습니다.
-     *
-     * initialData가 도착한 지금,
-     * 현재 직접 입력 STEP 2가 열려 있다면
-     * 동일한 데이터를 이용해 화면을 한 번 다시 그립니다.
-     *
-     * 따라서:
-     *
-     * 직접 입력
-     * → 즉시 STEP 2
-     * → initialData 도착
-     * → 거래처/제품/납품형태/제2배송지 자동 채움
-     *
-     * 기존 음성인식 동작에는 영향을 주지 않습니다.
-     * ======================================================================
+     * ⭐ 서버 제품 준비가 먼저 끝났거나 사용자가 이미 수정했다면
+     * 현재 STEP 2 입력값을 보존한 상태로 거래처 목록만 다시 그립니다.
      */
+    syncCurrentPreviewDataFromForm();
 
     if (
-      currentInputMode === "direct" &&
-      currentPreviewData &&
-      !resultCard.classList.contains(
-        "step-hidden"
-      )
+      !document.getElementById("resultCard").classList.contains("step-hidden") &&
+      currentPreviewData
     ) {
-
-      /*
-       * ⭐ 서버 directPreview가 아직 오지 않았다면
-       * 처음 만들어 둔 localPreview를 다시 사용합니다.
-       *
-       * 서버 directPreview가 이미 왔다면
-       * currentPreviewData에 서버 데이터가 들어 있으므로
-       * 그 데이터를 그대로 사용합니다.
-       */
-
-      showPreview(
-        currentPreviewData
-      );
-
-
-      /*
-       * ⭐ directPreview가 아직 처리 중이면
-       * 등록 버튼은 다시 비활성 상태로 유지합니다.
-       *
-       * directPreview가 완료되면
-       * startDirectInput()에서 다시 활성화합니다.
-       */
-
-      if (!pendingToken) {
-
-        const confirmButton =
-          document.getElementById(
-            "confirmButton"
-          );
-
-
-        if (confirmButton) {
-
-          confirmButton.disabled =
-            true;
-
-          confirmButton.textContent =
-            "⏳ 등록 준비 중...";
-
-        }
-
-      }
-
+      showPreview(currentPreviewData);
     }
 
+    if (
+      currentPreviewData &&
+      currentPreviewData._autoStartVoice &&
+      !isSending
+    ) {
+      currentPreviewData._autoStartVoice = false;
+      setTimeout(function() {
+        const voiceButton =
+          document.getElementById("clientVoiceButton");
+        if (voiceButton) voiceButton.click();
+      }, 80);
+    }
+
+    return data;
 
   } catch (error) {
 
-    console.error(
-      "초기 데이터 오류:",
-      error
-    );
+    initialDataLoading = false;
 
+    initialDataReady = clientList.length > 0;
 
-    // ⭐⭐⭐ [속도 개선] 저장해 둔 데이터가 있으면
-    //        무서운 빨간 에러 대신 안내 문구를 보여줍니다.
-    if (readInitialDataCache(INITIAL_DATA_CACHE_KEY)) {
+    console.error("STEP 2 거래처 데이터 오류:", error);
 
-      inputResult.innerHTML =
-        "⚡ 저장해 둔 거래처 / 제품으로 계속할 수 있어요.<br><br>새로운 정보는 인터넷이 안정되면 자동으로 업데이트됩니다.";
+    if (!initialDataReady) {
+      const target =
+        document.getElementById("clientSearchPanel");
 
-    } else {
-
-      inputResult.innerHTML =
-        '<div class="error">' +
-        '❌ 거래처 / 제품 목록을 가져오지 못했습니다.<br><br>' +
-        escapeHtml(
-          error.message ||
-          String(error)
-        ) +
-        '</div>';
-
+      if (target) {
+        target.insertAdjacentHTML(
+          "beforebegin",
+          '<div id="clientDataError" class="error" style="margin-top:8px;">' +
+          '❌ 거래처 정보를 준비하지 못했습니다.<br><br>' +
+          escapeHtml(error.message || String(error)) +
+          '</div>'
+        );
+      }
     }
 
+    return null;
   }
+}
 
+
+// ⭐ 기존 함수명은 호환을 위해 남겨둡니다.
+// ⭐ 이제 호출 위치는 앱 시작이 아니라 STEP 2입니다.
+async function loadInitialData() {
+  return loadClientDataForStep2();
+}
+
+
+function syncCurrentPreviewDataFromForm() {
+
+  if (!currentPreviewData) return;
+
+  const ids = {
+    clientPageId: "clientSelect",
+    productPageId: "productSelect",
+    quantity: "quantityInput",
+    mode: "modeSelect",
+    deliveryDate: "deliveryDateInput",
+    size: "sizeInput",
+    deliveryType: "deliveryTypeSelect",
+    secondDeliveryLocation: "secondDeliverySelect",
+    memo: "memoInput"
+  };
+
+  Object.keys(ids).forEach(function(key) {
+    const element = document.getElementById(ids[key]);
+    if (!element) return;
+
+    if (key === "quantity") {
+      currentPreviewData[key] = Number(element.value || 1);
+    } else {
+      currentPreviewData[key] = element.value;
+    }
+  });
+
+  const client = clientList.find(function(item) {
+    return String(item.id) === String(currentPreviewData.clientPageId || "");
+  });
+
+  if (client) {
+    currentPreviewData.clientName = client.name;
+  }
 }
 
 
@@ -4294,8 +4039,8 @@ async function loadInitialData() {
 // ⭐⭐⭐ 이번 요청으로 새로 추가된 기능
 //
 // 브라우저 전체 새로고침(F5)을 하지 않고,
-// 현재 STEP 2에서 필요한 거래처 / 제품 / 납품형태 / 제2배송지
-// 목록만 GAS의 initialData를 통해 다시 받아옵니다.
+// 현재 STEP 2 입력값을 처음 진입했을 때의 기본값으로 되돌립니다.
+// 브라우저 전체 새로고침이나 Notion 재조회는 하지 않습니다.
 //
 // ⭐ 중요한 점
 // 사용자가 이미 수정해 놓은 값은 그대로 보존합니다.
@@ -4315,237 +4060,74 @@ async function loadInitialData() {
 
 async function refreshInitialDataForPreview() {
 
-  const refreshButton =
-    document.getElementById(
-      "previewRefreshButton"
+  // ⭐ STEP 2의 "새로 고침"은 더 이상 Notion을 다시 읽지 않습니다.
+  // ⭐ 현재 화면을 처음 들어왔을 때의 기본값으로만 되돌립니다.
+
+  const defaultProduct =
+    getDefault15Product();
+
+
+  if (!defaultProduct) {
+
+    alert(
+      "기본 제품인 푸로찜 15 KG 정보를 아직 준비하지 못했습니다."
     );
 
+    return;
 
-  /*
-   * ⭐ 현재 STEP 2에 입력되어 있는 값을 먼저 보관합니다.
-   *
-   * 새로고침 과정에서 showPreview()가 다시 실행되더라도
-   * 사용자가 방금 수정한 값이 사라지지 않도록 합니다.
-   */
+  }
 
-  const currentValues = {
 
-    clientPageId:
-      document.getElementById(
-        "clientSelect"
-      )?.value || "",
+  const resetPreview = {
 
-    productPageId:
-      document.getElementById(
-        "productSelect"
-      )?.value || "",
+    status: "preview",
 
-    quantity:
-      document.getElementById(
-        "quantityInput"
-      )?.value || "1",
+    token: pendingToken,
 
-    mode:
-      document.getElementById(
-        "modeSelect"
-      )?.value || "출고",
+    clientPageId: "",
 
-    deliveryDate:
-      document.getElementById(
-        "deliveryDateInput"
-      )?.value ||
-      getTodayLocal(),
+    clientName: "",
 
-    deliveryType:
-      document.getElementById(
-        "deliveryTypeSelect"
-      )?.value ||
-      "직송",
+    productPageId: defaultProduct.id,
 
-    secondDeliveryLocation:
-      document.getElementById(
-        "secondDeliverySelect"
-      )?.value || "",
+    productName: defaultProduct.name,
 
-    memo:
-      document.getElementById(
-        "memoInput"
-      )?.value || ""
+    size: "15 KG",
+
+    quantity: 1,
+
+    mode: selectedTransactionMode,
+
+    deliveryDate: getTodayLocal(),
+
+    deliveryType: "직송",
+
+    secondDeliveryLocation: "",
+
+    memo: "",
+
+    text:
+      currentPreviewData && currentPreviewData.text
+        ? currentPreviewData.text
+        : "직접 입력"
 
   };
 
 
-  /*
-   * ⭐ 현재 등록 준비 상태도 기억합니다.
-   *
-   * 직접 입력을 누른 직후 아직 directPreview가 끝나지 않았다면
-   * pendingToken이 없을 수 있습니다.
-   *
-   * 이 상태를 새로고침 후에도 그대로 유지합니다.
-   */
+  currentPreviewData = resetPreview;
 
-  const hadPendingToken =
-    !!pendingToken;
+  showPreview(resetPreview);
 
 
-  /*
-   * ⭐ 버튼을 잠시 비활성화하여
-   * 사용자가 여러 번 연속으로 누르는 것을 방지합니다.
-   */
+  const confirmButton =
+    document.getElementById("confirmButton");
 
-  if (refreshButton) {
-
-    refreshButton.disabled =
-      true;
-
-    refreshButton.textContent =
-      "⏳ 새로 고침 중...";
-
-  }
-
-
-  try {
-
-    /*
-     * ⭐ 기존에 정상적으로 사용 중인
-     * loadInitialData()를 그대로 재사용합니다.
-     *
-     * 별도의 GAS 함수나 별도의 데이터 구조를 만들지 않습니다.
-     */
-
-    await loadInitialData();
-
-
-    /*
-     * ⭐ loadInitialData()가 끝나면
-     * 최신 거래처 / 제품 / Select 목록이 준비되어 있습니다.
-     *
-     * 그 최신 목록을 사용하면서
-     * 방금 전 STEP 2에서 사용자가 선택했던 값은 다시 적용합니다.
-     */
-
-    if (
-      currentPreviewData
-    ) {
-
-      const restoredPreview = {
-
-        ...currentPreviewData,
-
-        clientPageId:
-          currentValues.clientPageId,
-
-        productPageId:
-          currentValues.productPageId,
-
-        quantity:
-          currentValues.quantity,
-
-        mode:
-          currentValues.mode,
-
-        deliveryDate:
-          currentValues.deliveryDate,
-
-        deliveryType:
-          currentValues.deliveryType,
-
-        secondDeliveryLocation:
-          currentValues.secondDeliveryLocation,
-
-        memo:
-          currentValues.memo
-
-      };
-
-
-      /*
-       * ⭐ 최신 목록 + 기존 입력값을 합쳐서
-       * STEP 2를 다시 그립니다.
-       */
-
-      showPreview(
-        restoredPreview
-      );
-
-
-      /*
-       * ⭐ pendingToken이 아직 없었다면
-       * 확인 버튼도 다시 비활성화합니다.
-       *
-       * 반대로 pendingToken이 있었다면
-       * 정상적으로 등록 버튼을 사용할 수 있습니다.
-       */
-
-      if (!hadPendingToken) {
-
-        const confirmButton =
-          document.getElementById(
-            "confirmButton"
-          );
-
-
-        if (confirmButton) {
-
-          confirmButton.disabled =
-            true;
-
-          confirmButton.textContent =
-            "⏳ 등록 준비 중...";
-
-        }
-
-      }
-
-    }
-
-
-    console.log(
-      "🔄 STEP 2 초기 데이터 새로 고침 완료"
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "STEP 2 초기 데이터 새로 고침 오류:",
-      error
-    );
-
-
-    /*
-     * ⭐ 새로고침 실패해도
-     * 현재 화면과 기존 입력값은 최대한 그대로 유지합니다.
-     */
-
-    alert(
-      "거래처 / 제품 목록 새로 고침에 실패했습니다.\n\n" +
-      (
-        error.message ||
-        String(error)
-      )
-    );
-
-  } finally {
-
-    /*
-     * ⭐ 새로고침이 끝나면 버튼을 원래 상태로 복구합니다.
-     */
-
-    if (refreshButton) {
-
-      refreshButton.disabled =
-        false;
-
-      refreshButton.textContent =
-        "🔄 새로 고침";
-
-    }
-
+  if (confirmButton && !pendingToken) {
+    confirmButton.disabled = true;
+    confirmButton.textContent = "⏳ 등록 준비 중...";
   }
 
 }
-
 
 // ============================================================================
 // 📋 15-1. 제품 표시 순서
@@ -4851,6 +4433,16 @@ function showPreview(data) {
   currentPreviewData =
     data;
 
+  // ⭐ 비고 기본값
+if (
+  typeof currentPreviewData.memo === "undefined"
+) {
+
+  currentPreviewData.memo =
+    "";
+
+}
+
 
   const defaultProduct =
     getDefault15Product();
@@ -5020,27 +4612,6 @@ function showPreview(data) {
 
   const html =
 
-    '<div class="step-indicator">' +
-
-      '<div class="step-dot">' +
-        '1' +
-      '</div>' +
-
-      '<div class="step-line"></div>' +
-
-      '<div class="step-dot active">' +
-        '2' +
-      '</div>' +
-
-      '<div class="step-line"></div>' +
-
-      '<div class="step-dot">' +
-        '3' +
-      '</div>' +
-
-    '</div>' +
-
-
     '<div class="preview-top">' +
 
       /*
@@ -5108,7 +4679,9 @@ function showPreview(data) {
         '🏢 거래처' +
       '</label>' +
 
-      '<div class="client-choice-row">' +
+      '<div class="client-voice-row">' +
+
+        '<div class="client-choice-row">' +
 
         '<div class="client-search-wrap">' +
 
@@ -5174,6 +4747,17 @@ function showPreview(data) {
           ).join("") +
 
         '</select>' +
+
+      '</div>' +
+
+      '<button ' +
+        'type="button" ' +
+        'id="clientVoiceButton" ' +
+        'class="client-voice-button" ' +
+        'title="거래처와 수량을 말해주세요"' +
+      '>' +
+        '🎙️' +
+      '</button>' +
 
       '</div>' +
 
@@ -5418,7 +5002,6 @@ function showPreview(data) {
 
     '</div>' +
 
-
     '<div class="edit-row">' +
 
       '<label class="edit-label">' +
@@ -5429,19 +5012,15 @@ function showPreview(data) {
         'id="memoInput" ' +
         'class="edit-input" ' +
         'type="text" ' +
-        'placeholder="예: 문 앞에 놔주세요" ' +
         'value="' +
-        escapeAttribute(
-          String((data && data.memo) || "")
-        ) + '"' +
+          escapeAttribute(
+            data.memo || ''
+          ) +
+        '" ' +
+        'placeholder="비고를 입력하세요" ' +
       '>' +
 
-      '<div class="help-text">' +
-        '노션 "비고" 속성에 그대로 저장됩니다.' +
-      '</div>' +
-
     '</div>' +
-
 
     '<div class="original-text">' +
 
@@ -5569,6 +5148,8 @@ function showPreview(data) {
     data.clientPageId || ""
   );
 
+  setupClientVoiceButton();
+
   // ⭐ 거래처 전체 선택 화면 열기 / 뒤로가기
   const clientPickerButton =
     document.getElementById("clientPickerButton");
@@ -5579,9 +5160,31 @@ function showPreview(data) {
   const clientPickerBackButton =
     document.getElementById("clientPickerBackButton");
 
+  let clientPickerHistoryPushed = false;
+
+  function openClientPicker() {
+    if (!clientPickerScreen) return;
+    clientPickerScreen.classList.remove("step-hidden");
+    if (!clientPickerHistoryPushed) {
+      history.pushState({prozymeClientPicker:true}, "");
+      clientPickerHistoryPushed = true;
+    }
+  }
+
+  function closeClientPicker(useHistoryBack) {
+    if (!clientPickerScreen) return;
+    clientPickerScreen.classList.add("step-hidden");
+    if (useHistoryBack && clientPickerHistoryPushed) {
+      clientPickerHistoryPushed = false;
+      history.back();
+    } else {
+      clientPickerHistoryPushed = false;
+    }
+  }
+
   if (clientPickerButton && clientPickerScreen) {
     clientPickerButton.addEventListener("click", function() {
-      clientPickerScreen.classList.remove("step-hidden");
+      openClientPicker();
     });
 
     clientPickerScreen
@@ -5610,7 +5213,11 @@ function showPreview(data) {
           }
 
           clientPickerButton.textContent = "🏢 " + selectedClient.name;
-          clientPickerScreen.classList.add("step-hidden");
+          if (currentPreviewData) {
+            currentPreviewData.clientPageId = selectedClient.id;
+            currentPreviewData.clientName = selectedClient.name;
+          }
+          closeClientPicker(true);
           renderTransactionSummary();
         });
       });
@@ -5618,9 +5225,16 @@ function showPreview(data) {
 
   if (clientPickerBackButton && clientPickerScreen) {
     clientPickerBackButton.addEventListener("click", function() {
-      clientPickerScreen.classList.add("step-hidden");
+      closeClientPicker(true);
     });
   }
+
+  window.addEventListener("popstate", function() {
+    if (clientPickerScreen && !clientPickerScreen.classList.contains("step-hidden")) {
+      clientPickerHistoryPushed = false;
+      clientPickerScreen.classList.add("step-hidden");
+    }
+  });
 
   const liveUpdateIds = [
     "productSelect",
@@ -5826,6 +5440,73 @@ function renderTransactionSummary() {
 // 🏢 16-1. 거래처 검색 / 후보 선택
 // ============================================================================
 
+function setupClientVoiceButton() {
+
+  const button=document.getElementById("clientVoiceButton");
+  if(!button || !SpeechRecognition) return;
+
+  let localRecognition=null;
+  let running=false;
+  let timerId=null;
+  let transcript="";
+
+  function finish(){
+    if(!running) return;
+    running=false;
+    clearTimeout(timerId);
+    button.classList.remove("listening");
+    button.textContent="🎙️";
+    if(localRecognition){try{localRecognition.stop();}catch(e){}}
+    const text=cleanText(transcript);
+    if(!text) return;
+    const client=findClientLocalFromVoice(text);
+    if(!client){
+      alert("거래처를 정확하게 찾지 못했어요. 다시 말씀해주세요.");
+      return;
+    }
+    const qty=getKoreanQuantityLocal(text);
+    const quantityInput=document.getElementById("quantityInput");
+    const spokenQuantity = /\d+|하나|한|두|둘|세|셋|네|넷|다섯|여섯|일곱|여덟|아홉|열/.test(text.replace(/\s+/g,""));
+    const finalQuantity = spokenQuantity
+      ? qty
+      : Number(quantityInput && quantityInput.value ? quantityInput.value : 1);
+    const clientSelect=document.getElementById("clientSelect");
+    const searchInput=document.getElementById("clientSearchInput");
+    const selectedBox=document.getElementById("selectedClient");
+    const pickerButton=document.getElementById("clientPickerButton");
+    if(clientSelect) clientSelect.value=client.id;
+    if(searchInput) searchInput.value=client.name;
+    if(selectedBox){selectedBox.style.display="block";selectedBox.innerHTML="✅ 선택된 거래처: "+escapeHtml(client.name);}
+    if(pickerButton) pickerButton.textContent="🏢 "+client.name;
+    if(quantityInput) quantityInput.value=finalQuantity;
+    if(currentPreviewData){currentPreviewData.clientPageId=client.id;currentPreviewData.clientName=client.name;currentPreviewData.quantity=finalQuantity;}
+    renderTransactionSummary();
+  }
+
+  button.addEventListener("click",function(){
+    if(running) { finish(); return; }
+    transcript="";
+    localRecognition=new SpeechRecognition();
+    localRecognition.lang="ko-KR";
+    localRecognition.continuous=false;
+    localRecognition.interimResults=true;
+    localRecognition.maxAlternatives=1;
+    running=true;
+    button.classList.add("listening");
+    button.textContent="⏹️";
+    localRecognition.onresult=function(event){
+      let t="";
+      for(let i=event.resultIndex;i<event.results.length;i++) t += " "+event.results[i][0].transcript;
+      transcript=cleanText(t);
+    };
+    localRecognition.onerror=function(){finish();};
+    localRecognition.onend=function(){if(running) finish();};
+    try{localRecognition.start();}catch(e){finish();}
+    timerId=setTimeout(finish,5000);
+  });
+}
+
+
 function setupClientSearch(
   initialClientId
 ) {
@@ -5895,6 +5576,12 @@ function setupClientSearch(
 
           renderCandidates();
 
+            document
+    .getElementById(
+      "clientSearchInput"
+    )
+    .focus();
+
         }
 
       }
@@ -5948,6 +5635,11 @@ function setupClientSearch(
     if (pickerButton) {
       pickerButton.textContent =
         "🏢 " + client.name;
+    }
+
+    if (currentPreviewData) {
+      currentPreviewData.clientPageId = client.id;
+      currentPreviewData.clientName = client.name;
     }
 
     renderTransactionSummary();
@@ -6372,6 +6064,16 @@ async function confirmNotionRegistration() {
       "secondDeliverySelect"
     );
 
+  const memoInput =
+  document.getElementById(
+    "memoInput"
+  );
+
+const memo =
+  memoInput
+    ? memoInput.value.trim()
+    : "";
+
 
   if (
     !clientSelect ||
@@ -6427,18 +6129,6 @@ async function confirmNotionRegistration() {
 
   const secondDeliveryLocation =
     secondDeliverySelect.value;
-
-
-  const memoInput =
-    document.getElementById(
-      "memoInput"
-    );
-
-
-  const memo =
-    String(
-      (memoInput && memoInput.value) || ""
-    ).trim();
 
 
   if (!clientPageId) {
@@ -6625,7 +6315,6 @@ async function confirmNotionRegistration() {
 
         memo:
           memo
-
       });
 
 
@@ -6738,6 +6427,14 @@ async function confirmNotionRegistration() {
       '📍 제2배송지: ' +
       escapeHtml(
         data.secondDeliveryLocation ||
+        '없음'
+      ) +
+
+      '<br>' +
+
+      '📝 비고: ' +
+      escapeHtml(
+        data.memo ||
         '없음'
       );
 
@@ -6942,7 +6639,33 @@ function resetForNewRecording() {
 
 }
 
+// =========================================================
+// ⭐ 첫 화면 새로 고침
+//
+// 앱을 처음 열었을 때와 같은 입력 화면으로 돌아갑니다.
+// 단, 앱 시작 시 이미 받아온 Notion 데이터는 그대로 유지합니다.
+// =========================================================
 
+const inputRefreshButton =
+  document.getElementById(
+    "inputRefreshButton"
+  );
+
+if (inputRefreshButton) {
+
+  inputRefreshButton.addEventListener(
+    "click",
+    function() {
+
+      // 기존 전체 초기화 함수 사용
+      resetForNewRecording();
+
+    }
+  );
+
+}
+
+  
 // ============================================================================
 // 🛡️ 19. HTML 안전 처리
 // ============================================================================
@@ -6992,45 +6715,113 @@ function escapeAttribute(
 
 
 // ============================================================================
-// ⭐ 20. 페이지 처음 열렸을 때
+// 🚀 20-1. 앱 시작 준비
+// ⭐ 앱이 열리자마자 거래처 / 제품 / 선택 목록을 먼저 준비합니다.
 // ============================================================================
 
-// ============================================================================
-// ⭐⚡ [속도 개선] 앱 시작
-// 저장해 둔 데이터가 있으면 먼저 보여주고(즉시 시작),
-// 그 뒤에 loadInitialData()가 새 데이터를 조용히 받아와 바꿔치기합니다.
-// ============================================================================
+async function initializeApp() {
 
-const cachedInitialData =
-  readInitialDataCache(INITIAL_DATA_CACHE_KEY);
+  initialDataLoading = true;
+  initialDataReady = false;
 
-if (cachedInitialData) {
+
+  // ⭐ 캐시가 없는 첫 실행에서만 준비 표시를 보여줍니다.
+  if (!initialDataReady) {
+    inputResult.innerHTML =
+      '<div class="notion-loading">' +
+        '<div class="loading-spinner"></div>' +
+        '<div class="loading-text">거래처 정보를 준비하고 있습니다...</div>' +
+      '</div>';
+  }
+
+
+  // ⭐ 초기 데이터가 준비될 때까지 주요 입력 버튼을 잠시 막습니다.
+//  startButton.disabled = true;
+//  directButton.disabled = true;
+//  inboundModeButton.disabled = true;
+//  outboundModeButton.disabled = true;
+
 
   try {
 
-    applyInitialData(cachedInitialData);
+    await loadInitialData();
+
+
+    if (!initialDataReady) {
+
+      throw new Error(
+        "초기 데이터 준비에 실패했습니다."
+      );
+
+    }
+    // ⭐ 노션 데이터 로딩 완료
+inputResult.innerHTML =
+  "버튼을 누르고 말씀해주세요.";
+
+
+    // ⭐ 모든 초기 데이터가 준비된 후에만 사용 가능
+//    startButton.disabled = false;
+//    directButton.disabled = false;
+//    inboundModeButton.disabled = false;
+//    outboundModeButton.disabled = false;
+
 
     inputResult.innerHTML =
-      "버튼을 누르고 말씀해주세요. ⚡";
+      "버튼을 누르고 말씀해주세요.";
+
 
     console.log(
-      "⚡ 저장해 둔 데이터로 먼저 시작합니다"
+      "🚀 앱 사용 준비 완료"
     );
 
-  } catch (cacheApplyError) {
 
-    // 캐시 적용에 실패하면 그냥 새로 받습니다.
+  } catch (error) {
+
+    console.error(
+      "앱 시작 준비 오류:",
+      error
+    );
+
+
+    // ⭐ 기존 캐시가 있다면 앱 사용은 계속 허용합니다.
+    // 실제 최신 목록 갱신만 실패한 것이므로 음성/검색 기능을 막지 않습니다.
+    if (clientList.length > 0) {
+      initialDataReady = true;
+      inputResult.innerHTML =
+        '⚠️ 최신 거래처 목록 갱신에 실패했습니다.<br><br>' +
+        '현재 저장된 거래처 목록으로 계속 사용할 수 있습니다.';
+    } else {
+      startButton.disabled = true;
+      directButton.disabled = true;
+      inboundModeButton.disabled = true;
+      outboundModeButton.disabled = true;
+
+      inputResult.innerHTML =
+        '<div class="error">' +
+          '❌ 거래처 정보를 준비하지 못했습니다.<br><br>' +
+          escapeHtml(
+            error.message ||
+            String(error)
+          ) +
+        '</div>';
+    }
 
   }
 
 }
+  
+// ============================================================================
+// ⭐ 20. 페이지 처음 열렸을 때
+// ============================================================================
 
-loadInitialData();
+// ⭐⭐⭐ 첫 화면에서는 거래처 / 제품 / Notion 데이터를 읽지 않습니다.
+// 사용자가 입출고를 선택하고 STEP 2로 들어간 뒤
+// loadClientDataForStep2()가 거래처만 준비합니다.
+inputResult.innerHTML = "버튼을 누르고 말씀해주세요.";
 
 
 </script>
 
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
