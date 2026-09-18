@@ -7892,7 +7892,18 @@ function setupStep2Pickers() {
           : "날짜를 선택하세요 ▼";
 
 
+      // ⭐ 날짜를 선택하는 순간 실제 데이터에도 바로 반영
+      if (currentPreviewData) {
+        currentPreviewData.deliveryDate = dateInput.value;
+      }
+
+
+      // ⭐ 캘린더 바로 닫기
       dateList.classList.add("step-hidden");
+
+
+      // ⭐ 화면의 거래내용 요약도 즉시 갱신
+      renderTransactionSummary();
 
     });
 
