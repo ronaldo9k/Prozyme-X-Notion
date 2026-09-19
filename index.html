@@ -1001,6 +1001,32 @@ button:disabled {
     }
 
 
+    /* ⭐ Notion 등록 처리 중에는 흰 카드 영역을 거의 투명하게 */
+    #resultCard.result-card-loading {
+      background: rgba(255,255,255,.10) !important;
+      box-shadow: 0 10px 32px rgba(0,0,0,.12) !important;
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
+
+    #resultCard.result-card-loading #result {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 170px;
+      text-align: center;
+    }
+
+    #resultCard.result-card-loading .listening {
+      color: #fff;
+      font-size: 17px;
+      line-height: 1.6;
+      text-align: center;
+      text-shadow: 0 2px 8px rgba(0,0,0,.90);
+      font-weight: 900;
+    }
+
     .listening {
 
       color: var(--red);
@@ -1094,6 +1120,15 @@ button:disabled {
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       padding: 8px 0;
+    }
+
+    /* ⭐ STEP 2 상단 고정 메뉴: 3개 핵심 버튼을 눈에 잘 띄는 프리미엄 스타일로 */
+    .preview-top {
+      background: rgba(5,7,11,.92);
+      border: 1px solid rgba(201,162,39,.28);
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.30);
     }
 
     .preview-actions {
@@ -1212,6 +1247,31 @@ button:disabled {
 
     }
 
+
+    /* ⭐ 상단 3개 메뉴 버튼 최종 스타일 */
+    .preview-back,
+    .preview-refresh,
+    .preview-notion-home {
+      border: 1px solid rgba(201,162,39,.55);
+      background: linear-gradient(135deg, #111827 0%, #2b2615 52%, #0b0f16 100%);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.10);
+      text-shadow: 0 1px 3px rgba(0,0,0,.75);
+      transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+    }
+
+    .preview-back:hover,
+    .preview-refresh:hover,
+    .preview-notion-home:hover {
+      background: linear-gradient(135deg, #1f2937 0%, #403616 52%, #111827 100%);
+      box-shadow: 0 6px 15px rgba(0,0,0,.38), 0 0 10px rgba(201,162,39,.16);
+    }
+
+    .preview-back:active,
+    .preview-refresh:active,
+    .preview-notion-home:active {
+      transform: translateY(1px);
+    }
 
     .preview-notion-home:hover {
 
@@ -2473,6 +2533,46 @@ button:disabled {
        ② STEP 2 상단 "Notion 거래처 정보를 가져오는 중..." 상태바
        ---------------------------------------------------------------------- */
 
+    /* ⭐ 검정 상태바 + 거의 안 쓰는 목록 새로고침을 한 줄로 배치 */
+    .step2-status-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: stretch;
+      margin: 0 0 14px;
+    }
+
+    .step2-status-row .step2-status-bar {
+      margin: 0;
+      min-width: 0;
+    }
+
+    .step2-master-refresh-button {
+      width: auto !important;
+      min-width: 92px !important;
+      height: auto !important;
+      min-height: 50px !important;
+      margin: 0 !important;
+      padding: 8px 10px !important;
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 10px !important;
+      background: #e2e8f0 !important;
+      color: #64748b !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      line-height: 1.15 !important;
+      text-shadow: none !important;
+      box-shadow: 0 2px 6px rgba(0,0,0,.08) !important;
+      white-space: nowrap;
+      opacity: .86;
+    }
+
+    .step2-master-refresh-button:hover {
+      background: #cbd5e1 !important;
+      color: #475569 !important;
+      opacity: 1;
+    }
+
     .step2-status-bar {
 
       display: flex;
@@ -2745,6 +2845,19 @@ button:disabled {
 
 
     /* ⭐ 좁은 화면(모바일)에서는 두 상태바가 서로 방해하지 않게 세로로 쌓습니다. */
+
+    @media (max-width: 500px) {
+      .step2-status-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 6px;
+      }
+
+      .step2-master-refresh-button {
+        min-width: 82px !important;
+        padding: 7px 7px !important;
+        font-size: 10px !important;
+      }
+    }
 
     @media (max-width: 420px) {
 
@@ -3164,7 +3277,7 @@ button:disabled {
 // ============================================================================
 
 const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbz_148AxQRLFnr0Jol5U1dvgDjKgnD0pQkpNXn-o5wWbMdiLeOger_w_xLQOz7MlOom/exec";
+  "https://script.google.com/macros/s/AKfycbwkpTXrgO9eRvZGXtwbizlSL-3tXxp2XbudLA3c0ZZdR7SdXg7Kxm9xE6m7Xwz2qDt9/exec";
 
 // ============================================================================
 // ⭐ 1-1. GAS 서버 일시 응답불가 상태 (신규 추가)
@@ -5615,7 +5728,7 @@ if (
         'id="previewBackButton" ' +
         'class="preview-back">' +
 
-          '← 입력 화면' +
+          '← 메인 화면' +
 
         '</button>' +
 
@@ -5627,24 +5740,6 @@ if (
           '🔄 새로 고침' +
 
         '</button>' +
-
-        /*
-         * ⭐⭐⭐ 신규 추가 : "🗂️ 목록 새로고침" 버튼
-         *
-         * 제품 / 납품형태 / 제2배송지 목록은 거의 바뀌지 않아
-         * 서버가 저장해 둔 목록을 쓰지만, 노션에서 제2배송지 등이
-         * 추가되었을 때 이 버튼을 누르면 즉시 새 목록을 받아옵니다.
-         */
-        '<button ' +
-        'type="button" ' +
-        'id="previewMasterRefreshButton" ' +
-        'class="preview-refresh" ' +
-        'style="background:#334155;color:#f1f5f9;">' +
-
-          '🗂️ 목록 새로고침' +
-
-        '</button>' +
-
 
         /*
          * ⭐⭐⭐ STEP 2의 "📖 노션 열기" 버튼
@@ -5667,17 +5762,25 @@ if (
       '</div>' +
 
 
-    '<div ' +
-      'id="step2StatusBar" ' +
-      'class="step2-status-bar' +
-        (initialDataReady ? ' ready' : '') +
-      '">' +
-      '<div class="step2-status-spinner"></div>' +
-      '<div class="step2-status-text">' +
-        (initialDataReady
-          ? '김경우님 정보 입력 가능!'
-          : 'Notion 거래처 정보를 가져오는 중...') +
+    '<div class="step2-status-row">' +
+      '<div ' +
+        'id="step2StatusBar" ' +
+        'class="step2-status-bar' +
+          (initialDataReady ? ' ready' : '') +
+        '">' +
+        '<div class="step2-status-spinner"></div>' +
+        '<div class="step2-status-text">' +
+          (initialDataReady
+            ? '김경우님 정보 입력 가능!'
+            : 'Notion 거래처 정보를 가져오는 중...') +
+        '</div>' +
       '</div>' +
+      '<button ' +
+        'type="button" ' +
+        'id="previewMasterRefreshButton" ' +
+        'class="step2-master-refresh-button">' +
+        '🗂️ 목록 새로고침' +
+      '</button>' +
     '</div>' +
 
 
@@ -7388,6 +7491,8 @@ const memo =
   }
 
 
+  resultCard.classList.add("result-card-loading");
+
   previewResult.innerHTML =
     '<div class="listening">' +
     '📝 노션에 등록하고 있어요...<br><br>' +
@@ -7460,6 +7565,8 @@ const memo =
       "🎉 노션 등록 완료!"
     );
 
+
+    resultCard.classList.remove("result-card-loading");
 
     previewResult.innerHTML =
 
@@ -7625,6 +7732,8 @@ const memo =
       "❌ 노션 등록 실패"
     );
 
+
+    resultCard.classList.remove("result-card-loading");
 
     previewResult.innerHTML =
 
