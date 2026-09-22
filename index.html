@@ -3163,6 +3163,42 @@ button:disabled {
     }
 
 
+    /* ========================================================================
+       ⭐ Step 2 신규 추가 : 긴급(즉시) 체크박스
+       ======================================================================== */
+
+    .urgent-check-label {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+      font-size: 15px;
+
+      font-weight: 700;
+
+      color: var(--text);
+
+      padding: 10px 0;
+
+    }
+
+
+    .urgent-check-input {
+
+      width: 22px;
+
+      height: 22px;
+
+      min-width: 22px;
+
+      accent-color: var(--red);
+
+    }
+
+
   </style>
 
 </head>
@@ -3354,7 +3390,7 @@ button:disabled {
 // ============================================================================
 
 const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbwCM3q_gkdtGg3aHOYpmy4FDV7sYqxgBcEwMAxgVmMBEYbia_m5j-qSDPnMBZGuUQn1/exec";
+  "https://script.google.com/macros/s/AKfycbzqXb78SDNECgQr0ataA7EAjtGUGLlUN8W9P014GOqei9ZPss8uLx3hL6E4BzxQxHpD/exec";
 
 // ============================================================================
 // ⭐ 1-1. GAS 서버 일시 응답불가 상태 (신규 추가)
@@ -5109,6 +5145,13 @@ function syncCurrentPreviewDataFromForm() {
     currentPreviewData.parcelSend = !!parcelSendCheck.checked;
   }
 
+
+  // ⭐⭐⭐ Step 2 신규 추가 : 긴급(즉시) 체크 상태를 미리보기 데이터에 저장
+  const parcelUrgentCheck = document.getElementById("parcelUrgentCheck");
+  if (parcelUrgentCheck) {
+    currentPreviewData.parcelUrgent = !!parcelUrgentCheck.checked;
+  }
+
   const client = clientList.find(function(item) {
     return String(item.id) === String(currentPreviewData.clientPageId || "");
   });
@@ -5926,6 +5969,28 @@ if (
 
         '<div class="help-text">' +
           '체크하면 예약한 날짜·시간대에 송장 출력(RPA) 단계로 넘어갈 준비가 됩니다.' +
+        '</div>' +
+
+      '</div>' +
+
+      '<div class="edit-row">' +
+
+        '<label class="edit-label">' +
+          '⚡ 긴급 (즉시 처리)' +
+        '</label>' +
+
+        '<label class="urgent-check-label">' +
+          '<input ' +
+            'id="parcelUrgentCheck" ' +
+            'class="urgent-check-input" ' +
+            'type="checkbox" ' +
+            (currentPreviewData.parcelTimeSlot === "⚡ 긴급 (즉시)" ? ' checked' : '') +
+          '>' +
+          '<span>지금 당장 로봇이 등록만 먼저 실행 (30분 기다리지 않음)</span>' +
+        '</label>' +
+
+        '<div class="help-text">' +
+          '체크하고 등록하면 시간대가 자동으로 "⚡ 긴급 (즉시)" 로 저장되고, 사무실 로봇이 30분을 기다리지 않고 바로 달려와 로젠택배에 등록·저장까지 합니다. 송장 출력은 내가 직접!' +
         '</div>' +
 
       '</div>' +
@@ -7692,6 +7757,15 @@ const memo =
     senderCodeSelect ? senderCodeSelect.value : "";
 
 
+  // ⭐⭐⭐ Step 2 신규 추가 : 긴급(즉시) 모드 여부
+  //   택배 발송 체크 + 긴급 체크 둘 다 있어야 즉시 모드로 갑니다.
+  const parcelUrgentCheckForSubmit =
+    document.getElementById("parcelUrgentCheck");
+
+  const parcelUrgentMode =
+    parcelSend && parcelUrgentCheckForSubmit && !!parcelUrgentCheckForSubmit.checked;
+
+
   if (!clientPageId) {
 
     alert(
@@ -7933,7 +8007,9 @@ const memo =
           deliveryTypeIsParcel ? parcelSendDate : "",
 
         parcelTimeSlot:
-          deliveryTypeIsParcel ? parcelTimeSlot : "",
+          deliveryTypeIsParcel
+            ? (parcelUrgentMode ? "⚡ 긴급 (즉시)" : parcelTimeSlot)
+            : "",
 
         senderCode:
           deliveryTypeIsParcel ? senderCode : "",
@@ -9211,6 +9287,22 @@ function setupParcelFields() {
   if (parcelSendCheck) {
 
     parcelSendCheck.addEventListener("change", function() {
+
+      syncCurrentPreviewDataFromForm();
+
+    });
+
+  }
+
+
+  // ⭐⭐⭐ Step 2 신규 추가 : 긴급(즉시) 체크박스
+  const parcelUrgentCheck =
+    document.getElementById("parcelUrgentCheck");
+
+
+  if (parcelUrgentCheck) {
+
+    parcelUrgentCheck.addEventListener("change", function() {
 
       syncCurrentPreviewDataFromForm();
 
