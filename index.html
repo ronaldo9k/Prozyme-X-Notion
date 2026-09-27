@@ -3390,7 +3390,7 @@ button:disabled {
 // ============================================================================
 
 const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbw7gw6hWm3q1C14s1ttUdMHM6sr-FBDO67pdd_RhM2poO0wgviX02YnfUCc296OlECO/exec";
+  "https://script.google.com/macros/s/AKfycbyzpKPYEZc51PfP07TWnVUcl01TxAS53cnhKygrXccZZqjILVxbm-2uLzGH4LVvMYOu/exec";
 
 // ============================================================================
 // ⭐ 1-1. GAS 서버 일시 응답불가 상태 (신규 추가)
@@ -5152,6 +5152,19 @@ function syncCurrentPreviewDataFromForm() {
     currentPreviewData.parcelUrgent = !!parcelUrgentCheck.checked;
   }
 
+  // ⭐⭐⭐ Step 2 신규 추가 : 긴급 저장만 체크 상태를 미리보기 데이터에 저장
+
+  const parcelUrgentSaveOnly =
+    document.getElementById("parcelUrgentSaveOnly");
+
+  if (parcelUrgentSaveOnly) {
+
+    currentPreviewData.parcelUrgentSaveOnly =
+      !!parcelUrgentSaveOnly.checked;
+
+  }
+
+  
   const client = clientList.find(function(item) {
     return String(item.id) === String(currentPreviewData.clientPageId || "");
   });
@@ -5991,6 +6004,13 @@ if (
 
         '<div class="help-text">' +
           '체크하고 등록하면 시간대가 자동으로 "⚡ 긴급 (즉시)" 로 저장되고, 사무실 로봇이 30분을 기다리지 않고 바로 달려와 로젠택배에 등록·저장까지 합니다. 송장 출력은 내가 직접!' +
+        '<div class="edit-row">' +
+          '<label class="urgent-check-label">' +
+            '<input id="parcelUrgentSaveOnly" type="checkbox" class="urgent-check-input"' +
+              (currentPreviewData.parcelTimeSlot === "⚡ 긴급 (즉시·저장만)" ? ' checked' : '') +
+            '>' +
+            '<span>☑ 저장만 (송장 출력은 내가 직접) — 체크 안 하면 송장까지 자동</span>' +
+          '</label>' +
         '</div>' +
 
       '</div>' +
@@ -7765,6 +7785,10 @@ const memo =
   const parcelUrgentMode =
     parcelSend && parcelUrgentCheckForSubmit && !!parcelUrgentCheckForSubmit.checked;
 
+    // ⭐ 신규 : 긴급 체크 + "저장만" 체크 → ③ 저장만 모드
+  const parcelUrgentSaveOnlyCheck = document.getElementById("parcelUrgentSaveOnly");
+  const parcelUrgentSaveOnly = parcelUrgentMode && !!parcelUrgentSaveOnlyCheck && parcelUrgentSaveOnlyCheck.checked;
+
 
   if (!clientPageId) {
 
@@ -8008,7 +8032,11 @@ const memo =
 
         parcelTimeSlot:
           deliveryTypeIsParcel
-            ? (parcelUrgentMode ? "⚡ 긴급 (즉시)" : parcelTimeSlot)
+            ? (parcelUrgentMode 
+                ? (parcelUrgentSaveOnly
+                   ? "⚡ 긴급 (즉시·저장만)"      // ③ 등록+저장만, 송장은 내가
+                   : "⚡ 긴급 (즉시·송장포함)")   // ② 등록+저장+송장까지
+                : parcelTimeSlot)
             : "",
 
         senderCode:
@@ -9310,6 +9338,20 @@ function setupParcelFields() {
 
   }
 
+  // ⭐⭐⭐ Step 2 신규 추가 : 긴급 저장만 체크박스
+  const parcelUrgentSaveOnly =
+    document.getElementById("parcelUrgentSaveOnly");
+
+
+  if (parcelUrgentSaveOnly) {
+
+    parcelUrgentSaveOnly.addEventListener("change", function() {
+
+      syncCurrentPreviewDataFromForm();
+
+    });
+
+  }
 
   // ⭐ 납품형태가 바뀌면 택배 입력칸을 자동으로 보이거나 숨깁니다.
   const deliveryTypeSelect =
