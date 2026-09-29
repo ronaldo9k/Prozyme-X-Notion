@@ -3086,119 +3086,6 @@ button:disabled {
     }
 
 
-
-    /* ========================================================================
-       ⭐ 택배 발송 예약 입력칸 (2026-09 신규 추가)
-       납품형태가 "택배 발송" 일 때만 화면에 나타납니다.
-       ======================================================================== */
-
-    .parcel-extra-fields {
-
-      margin-top: 4px;
-
-      padding: 12px 12px 4px 12px;
-
-      border: 2px dashed var(--gold);
-
-      border-radius: 14px;
-
-      background: rgba(201,162,39,.06);
-
-    }
-
-
-    .parcel-extra-title {
-
-      font-size: 15px;
-
-      font-weight: 900;
-
-      color: #7a5c00;
-
-      margin-bottom: 4px;
-
-    }
-
-
-    .parcel-extra-note {
-
-      font-size: 12px;
-
-      color: var(--muted);
-
-      margin-bottom: 8px;
-
-    }
-
-
-    .parcel-check-label {
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 8px;
-
-      font-size: 15px;
-
-      font-weight: 700;
-
-      color: var(--text);
-
-      padding: 10px 0;
-
-    }
-
-
-    .parcel-check-input {
-
-      width: 22px;
-
-      height: 22px;
-
-      min-width: 22px;
-
-      accent-color: var(--green);
-
-    }
-
-
-    /* ========================================================================
-       ⭐ Step 2 신규 추가 : 긴급(즉시) 체크박스
-       ======================================================================== */
-
-    .urgent-check-label {
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 8px;
-
-      font-size: 15px;
-
-      font-weight: 700;
-
-      color: var(--text);
-
-      padding: 10px 0;
-
-    }
-
-
-    .urgent-check-input {
-
-      width: 22px;
-
-      height: 22px;
-
-      min-width: 22px;
-
-      accent-color: var(--red);
-
-    }
-
-
   </style>
 
 </head>
@@ -3390,7 +3277,7 @@ button:disabled {
 // ============================================================================
 
 const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbwEIM-aKqruUF39KpQrbwHVum5MYZctZ9kz2pvfIQE32bmuAwR6Ae8Ork4OEiUGymkM/exec";
+  "https://script.google.com/macros/s/AKfycby2rjb1TlOOU7rYuVO7AfM0WIp0KGZRii48RhmirwluGp9kfCyYpSCOUy4bEg6JJSi8/exec";
 
 // ============================================================================
 // ⭐ 1-1. GAS 서버 일시 응답불가 상태 (신규 추가)
@@ -3480,12 +3367,6 @@ let productList = [];
 let deliveryTypeList = [];
 
 let secondDeliveryLocationList = [];
-
-// ⭐⭐⭐ 2026-09 신규 추가 : 택배 발송용 목록
-//    (GAS 가 보내는 사람 주소록 / 발송 시간대를 내려줍니다)
-let senderList = [];
-
-let parcelTimeSlotList = [];
 
 let currentInputMode = "voice";
 
@@ -3935,18 +3816,6 @@ async function startDirectInput(autoStartVoice) {
         ? defaultProduct.name
         : "",
 
-    parcelSend:
-      false,
-
-    parcelSendDate:
-      getTodayLocal(),
-
-    parcelTimeSlot:
-      "",
-
-    senderCode:
-      "",
-
     size:
       "15 KG",
 
@@ -4073,13 +3942,6 @@ async function startDirectInput(autoStartVoice) {
     // ⭐ STEP 2 전용 데이터는 directPreview에서 한 번만 가져옵니다.
     productList =
       Array.isArray(data.products) ? data.products.slice() : [];
-
-    // ⭐⭐⭐ 2026-09 신규 추가 : 택배 발송용 목록
-    senderList =
-      Array.isArray(data.senders) ? data.senders.slice() : [];
-
-    parcelTimeSlotList =
-      Array.isArray(data.parcelTimeSlots) ? data.parcelTimeSlots.slice() : [];
 
     deliveryTypeList =
       Array.isArray(data.deliveryTypes) ? data.deliveryTypes.slice() : [];
@@ -4505,10 +4367,6 @@ function applyQuickVoiceToPreview(text) {
     deliveryType:"직송",
     secondDeliveryLocation:"",
     memo:"",
-    parcelSend:false,
-    parcelSendDate:getTodayLocal(),
-    parcelTimeSlot:"",
-    senderCode:"",
     text:text
   };
 
@@ -4553,8 +4411,6 @@ async function finishQuickVoiceRecording() {
     if(data.status!=="preview") throw new Error(data.message||"등록 준비에 실패했습니다.");
 
     productList=Array.isArray(data.products)?data.products.slice():[];
-    senderList=Array.isArray(data.senders)?data.senders.slice():[];
-    parcelTimeSlotList=Array.isArray(data.parcelTimeSlots)?data.parcelTimeSlots.slice():[];
     deliveryTypeList=Array.isArray(data.deliveryTypes)?data.deliveryTypes.slice():[];
     secondDeliveryLocationList=Array.isArray(data.secondDeliveryLocations)?data.secondDeliveryLocations.slice():[];
     productList=sortProductsByRequestedOrder(productList);
@@ -4871,14 +4727,6 @@ async function sendAnalyzeToGAS(text) {
       data.token;
 
 
-    // ⭐⭐⭐ 2026-09 신규 추가 : 택배 발송용 목록
-    if (Array.isArray(data.senders)) senderList = data.senders.slice();
-
-    if (Array.isArray(data.parcelTimeSlots)) {
-      parcelTimeSlotList = data.parcelTimeSlots.slice();
-    }
-
-
     currentPreviewData =
       data;
 
@@ -5120,12 +4968,7 @@ function syncCurrentPreviewDataFromForm() {
     size: "sizeInput",
     deliveryType: "deliveryTypeSelect",
     secondDeliveryLocation: "secondDeliverySelect",
-    memo: "memoInput",
-
-    // ⭐⭐⭐ 2026-09 신규 추가 : 택배 발송 항목
-    parcelSendDate: "parcelSendDateInput",
-    parcelTimeSlot: "parcelTimeSlotSelect",
-    senderCode: "senderCodeSelect"
+    memo: "memoInput"
   };
 
   Object.keys(ids).forEach(function(key) {
@@ -5139,32 +4982,6 @@ function syncCurrentPreviewDataFromForm() {
     }
   });
 
-  // ⭐⭐⭐ 2026-09 신규 추가 : 택배 발송 여부 체크박스
-  const parcelSendCheck = document.getElementById("parcelSendCheck");
-  if (parcelSendCheck) {
-    currentPreviewData.parcelSend = !!parcelSendCheck.checked;
-  }
-
-
-  // ⭐⭐⭐ Step 2 신규 추가 : 긴급(즉시) 체크 상태를 미리보기 데이터에 저장
-  const parcelUrgentCheck = document.getElementById("parcelUrgentCheck");
-  if (parcelUrgentCheck) {
-    currentPreviewData.parcelUrgent = !!parcelUrgentCheck.checked;
-  }
-
-  // ⭐⭐⭐ Step 2 신규 추가 : 긴급 저장만 체크 상태를 미리보기 데이터에 저장
-
-  const parcelUrgentSaveOnly =
-    document.getElementById("parcelUrgentSaveOnly");
-
-  if (parcelUrgentSaveOnly) {
-
-    currentPreviewData.parcelUrgentSaveOnly =
-      !!parcelUrgentSaveOnly.checked;
-
-  }
-
-  
   const client = clientList.find(function(item) {
     return String(item.id) === String(currentPreviewData.clientPageId || "");
   });
@@ -5246,14 +5063,6 @@ async function refreshInitialDataForPreview() {
     secondDeliveryLocation: "",
 
     memo: "",
-
-    parcelSend: false,
-
-    parcelSendDate: getTodayLocal(),
-
-    parcelTimeSlot: "",
-
-    senderCode: "",
 
     text:
       currentPreviewData && currentPreviewData.text
@@ -5348,15 +5157,6 @@ async function refreshMasterDataFromNotion() {
 
     if (Array.isArray(data.secondDeliveryLocations)) {
       secondDeliveryLocationList = data.secondDeliveryLocations.slice();
-    }
-
-    // ⭐⭐⭐ 2026-09 신규 추가 : 택배 발송용 목록
-    if (Array.isArray(data.senders)) {
-      senderList = data.senders.slice();
-    }
-
-    if (Array.isArray(data.parcelTimeSlots)) {
-      parcelTimeSlotList = data.parcelTimeSlots.slice();
     }
 
     // ⭐ 사용자가 지금 입력한 값(거래처 / 수량 등)은 그대로 보존합니다.
@@ -5703,25 +5503,6 @@ function showPreview(data) {
   currentPreviewData =
     data;
 
-  // ⭐⭐⭐ 2026-09 신규 추가 : 택배 발송 항목 기본값
-  //    (기존 음성 입력 흐름에서도 값이 비어 있지 않도록 안전하게 채워둡니다)
-  if (typeof currentPreviewData.parcelSend === "undefined") {
-    currentPreviewData.parcelSend = false;
-  }
-
-  if (!currentPreviewData.parcelSendDate) {
-    currentPreviewData.parcelSendDate = getTodayLocal();
-  }
-
-  if (typeof currentPreviewData.parcelTimeSlot === "undefined") {
-    currentPreviewData.parcelTimeSlot = "";
-  }
-
-  if (typeof currentPreviewData.senderCode === "undefined") {
-    currentPreviewData.senderCode = "";
-  }
-
-
   // ⭐ 비고 기본값
 if (
   typeof currentPreviewData.memo === "undefined"
@@ -5914,188 +5695,6 @@ if (
         return { value: option, label: option };
       })
     );
-
-
-  // ==========================================================================
-  // ⭐⭐⭐ 2026-09 신규 추가 : 택배 발송 예약 입력칸
-  //
-  // 납품형태가 "택배 발송" 일 때만 화면에 나타납니다.
-  // (기본 상태에서는 완전히 숨겨져 있어 기존 화면과 100% 동일합니다)
-  // ==========================================================================
-
-  const parcelTimeSlotOptionItems =
-    (
-      Array.isArray(parcelTimeSlotList) && parcelTimeSlotList.length > 0
-        ? parcelTimeSlotList
-        : ["오전 (09:00~12:00)", "오후 (13:00~18:00)", "저녁 (18:00~21:00)"]
-    ).map(function(option) {
-      return { value: option, label: option };
-    });
-
-
-  const senderOptionItems =
-    [{ value: "", label: "보내는 사람 선택 안 함" }].concat(
-      (Array.isArray(senderList) ? senderList : []).map(function(item) {
-        const label = item.code
-          ? (item.code + " · " + (item.name || ""))
-          : (item.name || "");
-        return { value: item.code || "", label: label };
-      })
-    );
-
-
-  const deliveryTypeIsParcel =
-    isParcelDeliveryType(normalizedDeliveryType);
-
-
-  const parcelExtraFieldsHtml =
-
-    '<div ' +
-      'id="parcelExtraFields" ' +
-      'class="parcel-extra-fields' +
-        (deliveryTypeIsParcel ? '' : ' step-hidden') +
-      '">' +
-
-      '<div class="parcel-extra-title">' +
-        '🚚 택배 발송 예약 정보' +
-      '</div>' +
-
-      '<div class="parcel-extra-note">' +
-        '납품형태가 "택배 발송"일 때만 보이는 입력칸입니다.' +
-      '</div>' +
-
-      '<div class="edit-row">' +
-
-        '<label class="edit-label">' +
-          '📦 택배 발송 여부' +
-        '</label>' +
-
-        '<label class="parcel-check-label">' +
-          '<input ' +
-            'id="parcelSendCheck" ' +
-            'class="parcel-check-input" ' +
-            'type="checkbox" ' +
-            (currentPreviewData.parcelSend ? ' checked' : '') +
-          '>' +
-          '<span>택배 발송을 예약합니다</span>' +
-        '</label>' +
-
-        '<div class="help-text">' +
-          '체크하면 예약한 날짜·시간대에 송장 출력(RPA) 단계로 넘어갈 준비가 됩니다.' +
-        '</div>' +
-
-      '</div>' +
-
-      '<div class="edit-row">' +
-
-        '<label class="edit-label">' +
-          '⚡ 긴급 (즉시 처리)' +
-        '</label>' +
-
-        '<label class="urgent-check-label">' +
-          '<input ' +
-            'id="parcelUrgentCheck" ' +
-            'class="urgent-check-input" ' +
-            'type="checkbox" ' +
-            (currentPreviewData.parcelTimeSlot === "⚡ 긴급 (즉시)" ? ' checked' : '') +
-          '>' +
-          '<span>지금 당장 로봇이 등록만 먼저 실행 (30분 기다리지 않음)</span>' +
-        '</label>' +
-
-        '<div class="help-text">' +
-          '체크하고 등록하면 시간대가 자동으로 "⚡ 긴급 (즉시)" 로 저장되고, 사무실 로봇이 30분을 기다리지 않고 바로 달려와 로젠택배에 등록·저장까지 합니다. 송장 출력은 내가 직접!' +
-        '<div class="edit-row">' +
-          '<label class="urgent-check-label">' +
-            '<input id="parcelUrgentSaveOnly" type="checkbox" class="urgent-check-input"' +
-              (currentPreviewData.parcelTimeSlot === "⚡ 긴급 (즉시·저장만)" ? ' checked' : '') +
-            '>' +
-            '<span>☑ 저장만 (송장 출력은 내가 직접) — 체크 안 하면 송장까지 자동</span>' +
-          '</label>' +
-        '</div>' +
-
-      '</div>' +
-
-      '<div class="edit-row">' +
-
-        '<label class="edit-label">' +
-          '📅 택배 발송 예정일' +
-        '</label>' +
-
-        '<button ' +
-          'type="button" ' +
-          'id="parcelSendDateTrigger" ' +
-          'class="edit-input option-picker-trigger">' +
-
-          '📅 ' +
-          escapeHtml(
-            currentPreviewData.parcelSendDate ||
-            getTodayLocal()
-          ) +
-
-        '</button>' +
-
-        '<input ' +
-          'id="parcelSendDateInput" ' +
-          'class="date-input-hidden" ' +
-          'type="date" ' +
-          'value="' +
-            escapeAttribute(
-              currentPreviewData.parcelSendDate ||
-              getTodayLocal()
-            ) +
-          '"' +
-        '>' +
-
-        '<div ' +
-          'id="parcelSendDatePicker" ' +
-          'class="option-picker-list step-hidden"' +
-        '></div>' +
-
-        '<div class="help-text">' +
-          '오늘 보내면 오늘 날짜, 내일 보내면 내일 날짜를 고르세요.' +
-        '</div>' +
-
-      '</div>' +
-
-      '<div class="edit-row">' +
-
-        '<label class="edit-label">' +
-          '⏰ 택배 발송 시간대' +
-        '</label>' +
-
-        buildOptionPickerHtml(
-          "parcelTimeSlotSelect",
-          parcelTimeSlotOptionItems,
-          currentPreviewData.parcelTimeSlot || "",
-          "시간대를 선택하세요 ▼"
-        ) +
-
-        '<div class="help-text">' +
-          '이 시간대가 되면 GAS 가 로봇(RPA)에게 신호를 보냅니다.' +
-        '</div>' +
-
-      '</div>' +
-
-      '<div class="edit-row">' +
-
-        '<label class="edit-label">' +
-          '🏭 보내는 사람' +
-        '</label>' +
-
-        buildOptionPickerHtml(
-          "senderCodeSelect",
-          senderOptionItems,
-          currentPreviewData.senderCode || "",
-          "보내는 사람 선택 안 함 ▼"
-        ) +
-
-        '<div class="help-text">' +
-          '보통은 그냥 두시면 됩니다. 보내는 주소가 다른 업체일 때만 고르세요.' +
-        '</div>' +
-
-      '</div>' +
-
-    '</div>';
 
 
   const inputLabel =
@@ -6519,8 +6118,6 @@ if (
 
     '</div>' +
 
-    parcelExtraFieldsHtml +
-
     '<div class="edit-row">' +
 
       '<label class="edit-label">' +
@@ -6617,10 +6214,6 @@ if (
 
   // ⭐ 2026-09 추가 : 선택기 / 날짜 / 수량 / X 버튼 연결
   setupStep2Pickers();
-
-
-  // ⭐⭐⭐ 2026-09 신규 추가 : 택배 발송 예약 입력칸 연결
-  setupParcelFields();
 
 
   showResultScreen();
@@ -7751,45 +7344,6 @@ const memo =
     secondDeliverySelect.value;
 
 
-  // ⭐⭐⭐ 2026-09 신규 추가 : 택배 발송 예약 값 읽기
-  const parcelSendCheck =
-    document.getElementById("parcelSendCheck");
-
-  const parcelSendDateInput =
-    document.getElementById("parcelSendDateInput");
-
-  const parcelTimeSlotSelect =
-    document.getElementById("parcelTimeSlotSelect");
-
-  const senderCodeSelect =
-    document.getElementById("senderCodeSelect");
-
-  const parcelSend =
-    parcelSendCheck ? !!parcelSendCheck.checked : false;
-
-  const parcelSendDate =
-    parcelSendDateInput ? parcelSendDateInput.value : "";
-
-  const parcelTimeSlot =
-    parcelTimeSlotSelect ? parcelTimeSlotSelect.value : "";
-
-  const senderCode =
-    senderCodeSelect ? senderCodeSelect.value : "";
-
-
-  // ⭐⭐⭐ Step 2 신규 추가 : 긴급(즉시) 모드 여부
-  //   택배 발송 체크 + 긴급 체크 둘 다 있어야 즉시 모드로 갑니다.
-  const parcelUrgentCheckForSubmit =
-    document.getElementById("parcelUrgentCheck");
-
-  const parcelUrgentMode =
-    parcelSend && parcelUrgentCheckForSubmit && !!parcelUrgentCheckForSubmit.checked;
-
-    // ⭐ 신규 : 긴급 체크 + "저장만" 체크 → ③ 저장만 모드
-  const parcelUrgentSaveOnlyCheck = document.getElementById("parcelUrgentSaveOnly");
-  const parcelUrgentSaveOnly = parcelUrgentMode && !!parcelUrgentSaveOnlyCheck && parcelUrgentSaveOnlyCheck.checked;
-
-
   if (!clientPageId) {
 
     alert(
@@ -7895,47 +7449,6 @@ const memo =
   }
 
 
-  // ⭐⭐⭐ 2026-09 신규 추가 : 택배 발송을 체크했을 때만 예약 정보를 검사합니다.
-  const deliveryTypeIsParcel =
-    isParcelDeliveryType(deliveryType);
-
-  if (deliveryTypeIsParcel && parcelSend) {
-
-    if (
-      !/^\d{4}-\d{2}-\d{2}$/.test(
-        parcelSendDate
-      )
-    ) {
-
-      alert(
-        "택배 발송 예정일을 선택해주세요."
-      );
-
-      const dateTrigger =
-        document.getElementById("parcelSendDateTrigger");
-
-      if (dateTrigger) dateTrigger.focus();
-
-      return;
-
-    }
-
-
-    if (!parcelTimeSlot) {
-
-      alert(
-        "택배 발송 시간대를 선택해주세요."
-      );
-
-      if (parcelTimeSlotSelect) parcelTimeSlotSelect.focus();
-
-      return;
-
-    }
-
-  }
-
-
   isSending =
     true;
 
@@ -8021,26 +7534,6 @@ const memo =
 
         secondDeliveryLocation:
           secondDeliveryLocation,
-
-        // ⭐⭐⭐ 2026-09 신규 추가 : 택배 발송 예약 정보
-        //    (납품형태가 "택배 발송" 일 때만 값을 보냅니다)
-        parcelSend:
-          deliveryTypeIsParcel ? parcelSend : false,
-
-        parcelSendDate:
-          deliveryTypeIsParcel ? parcelSendDate : "",
-
-        parcelTimeSlot:
-          deliveryTypeIsParcel
-            ? (parcelUrgentMode 
-                ? (parcelUrgentSaveOnly
-                   ? "⚡ 긴급 (즉시·저장만)"      // ③ 등록+저장만, 송장은 내가
-                   : "⚡ 긴급 (즉시·송장포함)")   // ② 등록+저장+송장까지
-                : parcelTimeSlot)
-            : "",
-
-        senderCode:
-          deliveryTypeIsParcel ? senderCode : "",
 
         memo:
           memo
@@ -8168,14 +7661,6 @@ const memo =
       ) +
 
       '<br>' +
-
-      (data.parcelSend
-        ? ('🚚 택배 발송 예약: ' +
-           escapeHtml(data.parcelSendDate || '') +
-           ' / ' +
-           escapeHtml(data.parcelTimeSlot || '') +
-           '<br>')
-        : '') +
 
       '📝 비고: ' +
       escapeHtml(
@@ -9178,203 +8663,6 @@ inputResult.innerHTML =
 // loadClientDataForStep2()가 거래처만 준비합니다.
 renderStatusBrand();
 
-
-</script>
-
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
-
-<script>
-
-// ============================================================================
-// 🚚 16-4. 택배 발송 관련 (2026-09 신규 추가)
-// ============================================================================
-
-/*
- * 납품형태가 "택배 발송" 인지 확인합니다.
- *
- * ⭐ 기존 normalizeDeliveryType() 안의 판별 기준과 완전히 같은 규칙
- *    (문자열에서 공백을 지우고 "택배" 라는 글자가 들어 있는지)을 씁니다.
- *    그래서 노션의 실제 옵션 이름이 "택배 발송" 이든 "택배" 이든 모두 인식합니다.
- */
-function isParcelDeliveryType(value) {
-
-  const compact =
-    cleanText(value)
-      .toLowerCase()
-      .replace(/\s+/g, "");
-
-  return compact.includes("택배");
-
-}
-
-
-/*
- * 납품형태 값에 따라 택배 발송 입력칸을 보이거나 숨깁니다.
- */
-function toggleParcelExtraFields() {
-
-  const box =
-    document.getElementById("parcelExtraFields");
-
-  const deliveryTypeSelect =
-    document.getElementById("deliveryTypeSelect");
-
-  if (!box || !deliveryTypeSelect) return;
-
-  const isParcel =
-    isParcelDeliveryType(deliveryTypeSelect.value);
-
-  box.classList.toggle("step-hidden", !isParcel);
-
-}
-
-
-/*
- * 택배 발송 입력칸의 동작을 연결합니다.
- *
- * ⭐ 기존 납품요청일과 완전히 같은 방식(캘린더 + 30일 목록)을 그대로 씁니다.
- * ⭐ 기존 함수는 하나도 변경하지 않고, 새 입력칸만 추가로 연결합니다.
- */
-function setupParcelFields() {
-
-  // ⭐ 시간대 / 보내는 사람 선택기 (기존 선택기 함수 재사용)
-  bindOptionPicker("parcelTimeSlotSelect");
-
-  bindOptionPicker("senderCodeSelect");
-
-
-  // ⭐ 택배 발송 예정일
-  const dateTrigger =
-    document.getElementById("parcelSendDateTrigger");
-
-  const dateInput =
-    document.getElementById("parcelSendDateInput");
-
-  const dateList =
-    document.getElementById("parcelSendDatePicker");
-
-
-  if (dateTrigger && dateInput && dateList) {
-
-    dateTrigger.textContent =
-      dateInput.value
-        ? "📅 " + dateInput.value
-        : "날짜를 선택하세요 ▼";
-
-
-    dateTrigger.addEventListener("click", function() {
-
-      try {
-
-        if (typeof dateInput.showPicker === "function") {
-
-          dateInput.showPicker();
-
-          return;
-
-        }
-
-      } catch (error) {
-
-        console.log("parcelSendDate showPicker 오류:", error);
-
-      }
-
-
-      renderDateQuickList(dateInput, dateList, dateTrigger);
-
-      dateList.classList.toggle("step-hidden");
-
-    });
-
-
-    dateInput.addEventListener("change", function() {
-
-      dateTrigger.textContent =
-        dateInput.value
-          ? "📅 " + dateInput.value
-          : "날짜를 선택하세요 ▼";
-
-
-      dateList.classList.add("step-hidden");
-
-
-      syncCurrentPreviewDataFromForm();
-
-    });
-
-  }
-
-
-  // ⭐ 택배 발송 여부 체크박스
-  const parcelSendCheck =
-    document.getElementById("parcelSendCheck");
-
-
-  if (parcelSendCheck) {
-
-    parcelSendCheck.addEventListener("change", function() {
-
-      syncCurrentPreviewDataFromForm();
-
-    });
-
-  }
-
-
-  // ⭐⭐⭐ Step 2 신규 추가 : 긴급(즉시) 체크박스
-  const parcelUrgentCheck =
-    document.getElementById("parcelUrgentCheck");
-
-
-  if (parcelUrgentCheck) {
-
-    parcelUrgentCheck.addEventListener("change", function() {
-
-      syncCurrentPreviewDataFromForm();
-
-    });
-
-  }
-
-  // ⭐⭐⭐ Step 2 신규 추가 : 긴급 저장만 체크박스
-  const parcelUrgentSaveOnly =
-    document.getElementById("parcelUrgentSaveOnly");
-
-
-  if (parcelUrgentSaveOnly) {
-
-    parcelUrgentSaveOnly.addEventListener("change", function() {
-
-      syncCurrentPreviewDataFromForm();
-
-    });
-
-  }
-
-  // ⭐ 납품형태가 바뀌면 택배 입력칸을 자동으로 보이거나 숨깁니다.
-  const deliveryTypeSelect =
-    document.getElementById("deliveryTypeSelect");
-
-
-  if (deliveryTypeSelect) {
-
-    deliveryTypeSelect.addEventListener("change", function() {
-
-      toggleParcelExtraFields();
-
-      syncCurrentPreviewDataFromForm();
-
-    });
-
-  }
-
-
-  // ⭐ 처음 그릴 때 한 번 상태를 맞춥니다.
-  toggleParcelExtraFields();
-
-}
 
 </script>
 
